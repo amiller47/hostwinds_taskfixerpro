@@ -1,0 +1,114 @@
+{
+  "video": "near_full",
+  "start_frame": 2150,
+  "frames_processed": 50,
+  "state_changes": [
+    {
+      "frame": 2153,
+      "video_time": 293.3692033812768,
+      "state": "idle",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2174,
+      "video_time": 296.2306772646985,
+      "state": "delivery_in_progress",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2183,
+      "video_time": 297.4570232147363,
+      "state": "rock_in_flight",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2192,
+      "video_time": 298.68336916477415,
+      "state": "rocks_settling",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2204,
+      "video_time": 300.318497098158,
+      "state": "throw_complete",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2207,
+      "video_time": 300.7272790815039,
+      "state": "idle",
+      "throws": 1,
+      "end": 1
+    }
+  ],
+  "events": [
+    {
+      "time": 1775834703.1657407,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775834706.0072305,
+      "state": "rock_in_flight",
+      "event": "throw_released",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775834709.3087869,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775834714.315632,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 5
+      }
+    },
+    {
+      "time": 1775834715.2596505,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_red",
+        "throws_red": 1,
+        "throws_yellow": 0,
+        "total": 1
+      }
+    }
+  ],
+  "final_state": {
+    "state": "idle",
+    "end": 1,
+    "hammer": "team_yellow",
+    "possession": "team_yellow",
+    "scores": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "throws": {
+      "team_red": 1,
+      "team_yellow": 0
+    },
+    "total_throws": 1,
+    "near_rocks": 11,
+    "far_rocks": 0,
+    "last_update": 1775834753.3669925
+  }
+}

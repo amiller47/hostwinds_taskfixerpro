@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coaching Review — Curling Vision</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { color: #0f0; }
+        h2 { color: #afa; margin-top: 30px; }
+        .container { max-width: 1200px; margin: 0 auto; }
+        .game-card {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .teams { font-size: 20px; }
+        .score { font-size: 28px; font-weight: bold; }
+        .score .red { color: #ff6666; }
+        .score .yellow { color: #ffcc00; }
+        .end {
+            background: #222;
+            border-radius: 8px;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .end-header {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+        }
+        .shot {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            margin: 5px 0;
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+        .shot-num { width: 30px; font-weight: bold; }
+        .shot-team { width: 100px; }
+        .shot-team.red { color: #ff6666; }
+        .shot-team.yellow { color: #ffcc00; }
+        .shot-type { width: 100px; }
+        .shot-result { width: 80px; }
+        .shot-result.made { color: #0f0; }
+        .shot-result.missed { color: #f66; }
+        .canvas-container { display: flex; gap: 20px; }
+        canvas { border: 2px solid #444; border-radius: 8px; background: #000; }
+        .search-box {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        select, input, button {
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            border-radius: 4px;
+            margin: 5px;
+        }
+        button { cursor: pointer; }
+        button:hover { background: #444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥌 Coaching Review Tool</h1>
+
+        <div class="search-box">
+            <h3>Search Shots</h3>
+            <select id="search-team">
+                <option value="">All Teams</option>
+                <option value="team_red">Red</option>
+                <option value="team_yellow">Yellow</option>
+            </select>
+            <select id="search-type">
+                <option value="">All Shot Types</option>
+                <option value="draw">Draw</option>
+                <option value="takeout">Takeout</option>
+                <option value="guard">Guard</option>
+                <option value="freeze">Freeze</option>
+                <option value="hit_and_roll">Hit and Roll</option>
+            </select>
+            <select id="search-result">
+                <option value="">All Results</option>
+                <option value="made">Made</option>
+                <option value="missed">Missed</option>
+            </select>
+            <button onclick="searchShots()">Search</button>
+        </div>
+
+        <div id="games-list">
+            <h2>Recent Games</h2>
+            <p>Loading...</p>
+        </div>
+    </div>
+
+    <script>
+        // API endpoint
+        const API = '/coach_api';
+
+        // Canvas drawing functions
+        function drawSheet(canvas, rocks = []) {
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+
+            // Clear
+            ctx.fillStyle = '#e8f4f8';
+            ctx.fillRect(0, 0, w, h);
+
+            // House circles
+            const centerX = w / 2;
+            const houseY = h * 0.75;
+            const radii = [80, 60, 40, 15];
+
+            radii.forEach((r, i) => {
+                ctx.beginPath();
+                ctx.arc(centerX, houseY, r, 0, Math.PI * 2);
+                if (i === 0) ctx.fillStyle = 'rgba(255,0,0,0.3)';
+                else if (i === 2) ctx.fillStyle = '#4488ff';
+                else ctx.fillStyle = '#fff';
+                ctx.fill();
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Button
+            ctx.beginPath();
+            ctx.arc(centerX, houseY, 15, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+
+            // Draw rocks
+            rocks.forEach(rock => {
+                const rx = rock.x * (w / 720);
+                const ry = rock.y * (h / 1280);
+                ctx.beginPath();
+                ctx.arc(rx, ry, 12, 0, Math.PI * 2);
+                ctx.fillStyle = rock.color === 'red' ? '#cc0000' : '#ccaa00';
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+        }
+
+        // Load games
+        async function loadGames() {
+            try {
+                const res = await fetch(`${API}/games`);
+                const games = await res.json();
+                renderGames(games);
+            } catch (e) {
+                document.getElementById('games-list').innerHTML =
+                    '<p>Error loading games. Start the coaching server first.</p>';
+            }
+        }
+
+        // Render games list
+        function renderGames(games) {
+            const container = document.getElementById('games-list');
+            if (games.length === 0) {
+                container.innerHTML = '<p>No games recorded yet.</p>';
+                return;
+            }
+
+            let html = '<h2>Recent Games</h2>';
+            games.forEach(game => {
+                html += `
+                    <div class="game-card">
+                        <div class="game-header">
+                            <div class="teams">${game.team_red || 'Red'} vs ${game.team_yellow || 'Yellow'}</div>
+                            <div class="date">${game.date}</div>
+                            <div class="score">
+                                <span class="red">${game.final_score_red || 0}</span>
+                                -
+                                <span class="yellow">${game.final_score_yellow || 0}</span>
+                            </div>
+                        </div>
+                        <div class="ends">
+                            ${game.ends ? game.ends.map(end => renderEnd(end)).join('') : '<p>No ends recorded</p>'}
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        // Render end
+        function renderEnd(end) {
+            return `
+                <div class="end">
+                    <div class="end-header">
+                        <span>End ${end.end_number}</span>
+                        <span>Hammer: ${end.hammer_team.replace('team_', '')}</span>
+                        <span>Score: <span class="red">${end.score_red || 0}</span> - <span class="yellow">${end.score_yellow || 0}</span></span>
+                    </div>
+                    <div class="shots">
+                        ${end.shots ? end.shots.map(shot => renderShot(shot)).join('') : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render shot
+        function renderShot(shot) {
+            const teamClass = shot.team.includes('red') ? 'red' : 'yellow';
+            const resultClass = shot.result || '';
+            const rocks = shot.rock_positions ? JSON.parse(shot.rock_positions) : [];
+
+            return `
+                <div class="shot" onclick="showShot(${shot.id})">
+                    <span class="shot-num">${shot.shot_number}.</span>
+                    <span class="shot-team ${teamClass}">${shot.team.replace('team_', '')}</span>
+                    <span class="shot-type">${shot.shot_type || 'Unknown'}</span>
+                    <span class="shot-result ${resultClass}">${shot.result || ''}</span>
+                    <span class="rocks">${rocks.length} rocks</span>
+                    <span class="timestamp">${shot.video_timestamp ? shot.video_timestamp.toFixed(1) + 's' : ''}</span>
+                </div>
+            `;
+        }
+
+        // Search shots
+        async function searchShots() {
+            const team = document.getElementById('search-team').value;
+            const type = document.getElementById('search-type').value;
+            const result = document.getElementById('search-result').value;
+
+            const params = new URLSearchParams();
+            if (team) params.append('team', team);
+            if (type) params.append('shot_type', type);
+            if (result) params.append('result', result);
+
+            try {
+                const res = await fetch(`${API}/shots?${params}`);
+                const shots = await res.json();
+                // TODO: Render search results
+                console.log('Found shots:', shots);
+                alert(`Found ${shots.length} shots matching criteria`);
+            } catch (e) {
+                alert('Error searching shots');
+            }
+        }
+
+        // Load on start
+        loadGames();
+    </script>
+</body>
+</html>

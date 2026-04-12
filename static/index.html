@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling Live Dashboard - FCC Sheet 5</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #0f0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .panel {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #000;
+        }
+        h2 {
+            color: #0f0;
+            margin-bottom: 10px;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .info-bar {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 28px;
+        }
+        .possession {
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .team-red { background: #8b0000; }
+        .team-yellow { background: #b8860b; color: #111; }
+        .debug-panel {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .debug-panel h3 {
+            color: #0f0;
+            margin-top: 0;
+        }
+        .state {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .log-entry {
+            font-family: monospace;
+            font-size: 12px;
+            color: #aaa;
+            margin: 3px 0;
+        }
+        .update-time {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>🥌 Curling Live Dashboard - FCC Sheet 5</h1>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Far End</h2>
+            <canvas id="far-sheet" width="400" height="800"></canvas>
+        </div>
+        
+        <div class="panel">
+            <h2>Near End</h2>
+            <canvas id="near-sheet" width="400" height="800"></canvas>
+        </div>
+    </div>
+
+    <div class="info-bar">
+        <div><strong>End:</strong> <span id="end-num">1</span></div>
+        <div><strong>Throwing:</strong> <span id="possession" class="possession team-red">RED</span></div>
+        <div class="score">
+            <span style="color: #ff6666;">Red: <span id="score-red">0</span></span>
+            &nbsp;|&nbsp;
+            <span style="color: #ffcc00;">Yellow: <span id="score-yellow">0</span></span>
+        </div>
+        <div style="margin-top: 10px; font-size: 18px;">
+            Throws: <span id="throws-red" style="color: #ff6666;">0</span> / 
+            <span id="throws-yellow" style="color: #ffcc00;">0</span>
+        </div>
+    </div>
+
+    <div class="debug-panel">
+        <h3>🔧 Game State</h3>
+        <div class="state"><strong>State:</strong> <span id="game-state">idle</span></div>
+        <div class="state"><strong>Rocks Near:</strong> <span id="rocks-near">0</span></div>
+        <div class="state"><strong>Rocks Far:</strong> <span id="rocks-far">0</span></div>
+        <h3>📋 Recent Events</h3>
+        <div id="event-log"></div>
+    </div>
+
+    <div class="update-time">
+        Last updated: <span id="update-time">Never</span>
+    </div>
+
+    <script>
+        const canvases = {
+            far: document.getElementById('far-sheet').getContext('2d'),
+            near: document.getElementById('near-sheet').getContext('2d')
+        };
+
+        function drawSheet(ctx, end, data) {
+            const width = 400;
+            const height = 800;
+            ctx.clearRect(0, 0, width, height);
+
+            // Ice background
+            ctx.fillStyle = '#e8f4f8';
+            ctx.fillRect(0, 0, width, height);
+
+            // Center line
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+
+            // Hog line
+            const hogY = end === 'far' ? height - 150 : 150;
+            ctx.strokeStyle = '#cc0000';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(0, hogY);
+            ctx.lineTo(width, hogY);
+            ctx.stroke();
+
+            // House
+            const houseY = end === 'far' ? 200 : height - 200;
+            const centerX = width / 2;
+            const radii = [180, 120, 60, 15];
+            const colors = ['rgba(255,0,0,0.3)', '#fff', '#4488ff', '#fff'];
+
+            radii.forEach((r, i) => {
+                ctx.beginPath();
+                ctx.arc(centerX, houseY, r, 0, Math.PI * 2);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Draw rocks
+            const button = data.locked_button?.[end];
+            const houseSize = data.locked_house_size?.[end] || 400;
+            const detections = data.current_raw_detections?.[end] || [];
+            
+            const scale = 180.0 / (houseSize / 2);  // Scale to canvas
+
+            detections.forEach(det => {
+                if (det[0].includes('rock')) {
+                    let rx = det[1];
+                    let ry = det[2];
+                    
+                    // If we have button calibration, offset from there
+                    if (button) {
+                        const dx = rx - button[0];
+                        const dy = ry - button[1];
+                        rx = centerX + dx * scale;
+                        ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                    }
+
+                    const color = det[0].includes('red') ? '#cc0000' : '#ccaa00';
+                    
+                    ctx.beginPath();
+                    ctx.arc(rx, ry, 14, 0, Math.PI * 2);
+                    ctx.fillStyle = color;
+                    ctx.fill();
+                    ctx.strokeStyle = '#000';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function updateDashboard() {
+            fetch('/curling_data.json?t=' + Date.now())
+                .then(res => res.json())
+                .then(data => {
+                    const gs = data.game_state || {};
+                    
+                    // Update text
+                    document.getElementById('end-num').textContent = gs.end || 1;
+                    document.getElementById('game-state').textContent = gs.state || 'idle';
+                    document.getElementById('score-red').textContent = gs.score?.team_red || 0;
+                    document.getElementById('score-yellow').textContent = gs.score?.team_yellow || 0;
+                    document.getElementById('throws-red').textContent = gs.throws?.team_red || 0;
+                    document.getElementById('throws-yellow').textContent = gs.throws?.team_yellow || 0;
+                    document.getElementById('rocks-near').textContent = gs.near_rocks || 0;
+                    document.getElementById('rocks-far').textContent = gs.far_rocks || 0;
+                    
+                    // Possession
+                    const possession = gs.possession || 'team_red';
+                    const possEl = document.getElementById('possession');
+                    possEl.textContent = possession.replace('team_', '').toUpperCase();
+                    possEl.className = 'possession ' + possession;
+                    
+                    // Draw sheets
+                    drawSheet(canvases.far, 'far', data);
+                    drawSheet(canvases.near, 'near', data);
+                    
+                    // Event log
+                    const events = data.debug_logs || [];
+                    document.getElementById('event-log').innerHTML = events
+                        .slice(0, 5)
+                        .map(e => `<div class="log-entry">${e}</div>`)
+                        .join('');
+                    
+                    document.getElementById('update-time').textContent = 
+                        data.received_at || 'Never';
+                })
+                .catch(err => console.error('Update failed:', err));
+        }
+
+        // Initial update
+        updateDashboard();
+        
+        // Refresh every 2 seconds
+        setInterval(updateDashboard, 2000);
+    </script>
+</body>
+</html>

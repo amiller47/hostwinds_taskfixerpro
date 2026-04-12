@@ -1,0 +1,508 @@
+{
+  "video": "near_full",
+  "start_frame": 2000,
+  "frames_processed": 500,
+  "state_changes": [
+    {
+      "frame": 2010,
+      "video_time": 273.88392884178654,
+      "state": "idle",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2160,
+      "video_time": 294.32302800908406,
+      "state": "delivery_in_progress",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2200,
+      "video_time": 299.77345445369673,
+      "state": "rock_in_flight",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2230,
+      "video_time": 303.8612742871562,
+      "state": "rocks_settling",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2270,
+      "video_time": 309.3117007317689,
+      "state": "throw_complete",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2280,
+      "video_time": 310.674307342922,
+      "state": "idle",
+      "throws": 1,
+      "end": 1
+    },
+    {
+      "frame": 2470,
+      "video_time": 336.5638329548322,
+      "state": "delivery_in_progress",
+      "throws": 1,
+      "end": 1
+    },
+    {
+      "frame": 2520,
+      "video_time": 343.37686601059806,
+      "state": "rock_in_flight",
+      "throws": 1,
+      "end": 1
+    },
+    {
+      "frame": 2540,
+      "video_time": 346.1020792329044,
+      "state": "rocks_settling",
+      "throws": 1,
+      "end": 1
+    },
+    {
+      "frame": 2600,
+      "video_time": 354.27771889982336,
+      "state": "throw_complete",
+      "throws": 1,
+      "end": 1
+    },
+    {
+      "frame": 2610,
+      "video_time": 355.64032551097654,
+      "state": "idle",
+      "throws": 2,
+      "end": 1
+    },
+    {
+      "frame": 3120,
+      "video_time": 425.13326267978806,
+      "state": "delivery_in_progress",
+      "throws": 2,
+      "end": 1
+    },
+    {
+      "frame": 3140,
+      "video_time": 427.85847590209437,
+      "state": "rock_in_flight",
+      "throws": 2,
+      "end": 1
+    },
+    {
+      "frame": 3170,
+      "video_time": 431.94629573555386,
+      "state": "rocks_settling",
+      "throws": 2,
+      "end": 1
+    },
+    {
+      "frame": 3230,
+      "video_time": 440.1219354024729,
+      "state": "throw_complete",
+      "throws": 2,
+      "end": 1
+    },
+    {
+      "frame": 3240,
+      "video_time": 441.4845420136261,
+      "state": "idle",
+      "throws": 3,
+      "end": 1
+    },
+    {
+      "frame": 3820,
+      "video_time": 520.5157254605098,
+      "state": "delivery_in_progress",
+      "throws": 3,
+      "end": 1
+    },
+    {
+      "frame": 3850,
+      "video_time": 524.6035452939692,
+      "state": "rock_in_flight",
+      "throws": 3,
+      "end": 1
+    },
+    {
+      "frame": 3870,
+      "video_time": 527.3287585162756,
+      "state": "rocks_settling",
+      "throws": 3,
+      "end": 1
+    },
+    {
+      "frame": 3910,
+      "video_time": 532.7791849608882,
+      "state": "throw_complete",
+      "throws": 3,
+      "end": 1
+    },
+    {
+      "frame": 3920,
+      "video_time": 534.1417915720414,
+      "state": "idle",
+      "throws": 4,
+      "end": 1
+    },
+    {
+      "frame": 4170,
+      "video_time": 568.2069568508706,
+      "state": "delivery_in_progress",
+      "throws": 4,
+      "end": 1
+    },
+    {
+      "frame": 4200,
+      "video_time": 572.29477668433,
+      "state": "rock_in_flight",
+      "throws": 4,
+      "end": 1
+    },
+    {
+      "frame": 4240,
+      "video_time": 577.7452031289428,
+      "state": "rocks_settling",
+      "throws": 4,
+      "end": 1
+    },
+    {
+      "frame": 4270,
+      "video_time": 581.8330229624022,
+      "state": "throw_complete",
+      "throws": 4,
+      "end": 1
+    },
+    {
+      "frame": 4280,
+      "video_time": 583.1956295735554,
+      "state": "idle",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 5230,
+      "video_time": 712.6432576331063,
+      "state": "delivery_in_progress",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 5260,
+      "video_time": 716.7310774665658,
+      "state": "rock_in_flight",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 5270,
+      "video_time": 718.0936840777189,
+      "state": "idle",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 6210,
+      "video_time": 846.1787055261166,
+      "state": "delivery_in_progress",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 6250,
+      "video_time": 851.6291319707293,
+      "state": "rock_in_flight",
+      "throws": 5,
+      "end": 1
+    },
+    {
+      "frame": 6260,
+      "video_time": 852.9917385818825,
+      "state": "idle",
+      "throws": 5,
+      "end": 1
+    }
+  ],
+  "events": [
+    {
+      "time": 1775835175.5112605,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835180.9405086,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835184.5179589,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775835189.8078728,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 4
+      }
+    },
+    {
+      "time": 1775835190.667806,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_red",
+        "throws_red": 1,
+        "throws_yellow": 0,
+        "total": 1
+      }
+    },
+    {
+      "time": 1775835213.1084187,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835218.1044006,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835221.5604267,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775835226.611338,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 4
+      }
+    },
+    {
+      "time": 1775835228.0481567,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_yellow",
+        "throws_red": 1,
+        "throws_yellow": 1,
+        "total": 2
+      }
+    },
+    {
+      "time": 1775835285.9491823,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835288.9666512,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835293.0041585,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775835298.5413558,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 2
+      }
+    },
+    {
+      "time": 1775835300.6579626,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_red",
+        "throws_red": 2,
+        "throws_yellow": 1,
+        "total": 3
+      }
+    },
+    {
+      "time": 1775835362.6748233,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835365.7256544,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835369.3682752,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775835374.9638498,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 2
+      }
+    },
+    {
+      "time": 1775835375.8037257,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_yellow",
+        "throws_red": 2,
+        "throws_yellow": 2,
+        "total": 4
+      }
+    },
+    {
+      "time": 1775835403.9781928,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835407.0379498,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835410.604855,
+      "state": "rocks_settling",
+      "event": "rocks_settling",
+      "details": {
+        "camera": "near",
+        "elapsed": 0.0
+      }
+    },
+    {
+      "time": 1775835415.4822533,
+      "state": "throw_complete",
+      "event": "rocks_settled",
+      "details": {
+        "camera": "near",
+        "moving": 0
+      }
+    },
+    {
+      "time": 1775835416.3273532,
+      "state": "throw_complete",
+      "event": "throw_complete",
+      "details": {
+        "team": "team_red",
+        "throws_red": 3,
+        "throws_yellow": 2,
+        "total": 5
+      }
+    },
+    {
+      "time": 1775835517.561416,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835521.4682086,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835611.9586189,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775835616.507448,
+      "state": "rock_in_flight",
+      "event": "throw_released",
+      "details": {
+        "camera": "near"
+      }
+    }
+  ],
+  "final_state": {
+    "state": "idle",
+    "end": 1,
+    "hammer": "team_yellow",
+    "possession": "team_yellow",
+    "scores": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "throws": {
+      "team_red": 3,
+      "team_yellow": 2
+    },
+    "total_throws": 5,
+    "near_rocks": 3,
+    "far_rocks": 0,
+    "last_update": 1775835689.187493
+  }
+}

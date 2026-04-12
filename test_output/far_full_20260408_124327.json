@@ -1,0 +1,29 @@
+{
+  "video": "far_full",
+  "frames_processed": 50,
+  "frame_skip": 30,
+  "stats": {
+    "frames": 50,
+    "elapsed": 67.08469152450562,
+    "fps": 0.7453265247815192,
+    "class_counts": {
+      "Button": 50,
+      "house": 50,
+      "yellow-rock": 18,
+      "red-rock": 16
+    }
+  },
+  "calibration_saved": {
+    "far": {
+      "button": [
+        361.0,
+        599.0
+      ],
+      "house_size": 748.7
+    },
+    "near": {
+      "button": null,
+      "house_size": null
+    }
+  }
+}

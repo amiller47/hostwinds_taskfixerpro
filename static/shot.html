@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Shot Calling</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 { color: #0f0; text-align: center; }
+        h2 { color: #afa; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        .house-display {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            margin: 20px 0;
+        }
+        canvas { border: 2px solid #444; border-radius: 10px; background: #000; }
+        .controls {
+            background: #1a1a1a;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .game-info {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin: 10px 0;
+        }
+        .game-info label { display: block; margin-bottom: 5px; }
+        select, input {
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            padding: 8px;
+            border-radius: 4px;
+            width: 100%;
+        }
+        button {
+            background: #0a0;
+            color: #111;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px 5px;
+        }
+        button:hover { background: #0c0; }
+        button.secondary { background: #444; color: #eee; }
+        button.secondary:hover { background: #555; }
+        .suggestion {
+            background: #1a1a1a;
+            border: 2px solid #0f0;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .shot-name { font-size: 28px; color: #0f0; margin: 10px 0; }
+        .confidence { font-size: 18px; color: #888; }
+        .reasoning { margin-top: 15px; line-height: 1.6; }
+        .analysis {
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+        .team-red { color: #ff6666; }
+        .team-yellow { color: #ffcc00; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥌 AI Shot Calling Assistant</h1>
+
+        <div class="house-display">
+            <div>
+                <h2>Click to Place Rocks</h2>
+                <canvas id="house" width="400" height="500"></canvas>
+            </div>
+        </div>
+
+        <div class="controls">
+            <h3>Game Situation</h3>
+            <div class="game-info">
+                <div>
+                    <label>Throwing Team:</label>
+                    <select id="team">
+                        <option value="team_red">Red</option>
+                        <option value="team_yellow">Yellow</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Hammer:</label>
+                    <select id="hammer">
+                        <option value="team_red">Red</option>
+                        <option value="team_yellow" selected>Yellow</option>
+                    </select>
+                </div>
+                <div>
+                    <label>End:</label>
+                    <input type="number" id="end" value="1" min="1" max="10">
+                </div>
+                <div>
+                    <label>Throws Left:</label>
+                    <input type="number" id="throws" value="16" min="1" max="16">
+                </div>
+            </div>
+            <div class="game-info">
+                <div>
+                    <label>Red Score:</label>
+                    <input type="number" id="score-red" value="0" min="0">
+                </div>
+                <div>
+                    <label>Yellow Score:</label>
+                    <input type="number" id="score-yellow" value="0" min="0">
+                </div>
+            </div>
+            <button onclick="askAI()">Ask AI</button>
+            <button class="secondary" onclick="clearHouse()">Clear House</button>
+        </div>
+
+        <div id="suggestion" style="display: none;">
+            <h2>AI Suggestion</h2>
+            <div class="suggestion">
+                <div class="shot-name" id="shot-name"></div>
+                <div class="confidence" id="confidence"></div>
+                <div class="reasoning" id="reasoning"></div>
+            </div>
+            <div class="analysis">
+                <h3>House Analysis</h3>
+                <p><span class="team-red">Red in house:</span> <span id="red-count">0</span></p>
+                <p><span class="team-yellow">Yellow in house:</span> <span id="yellow-count">0</span></p>
+                <p><strong>Shot rock:</strong> <span id="shot-rock">None</span></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('house');
+        const ctx = canvas.getContext('2d');
+        const centerX = canvas.width / 2;
+        const houseY = canvas.height - 150;
+
+        let rocks = [];
+        let currentColor = 'red';
+
+        function drawHouse() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Ice background
+            ctx.fillStyle = '#e8f4f8';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // House circles
+            const radii = [150, 120, 90, 60, 30, 15];
+            const colors = ['rgba(255,0,0,0.3)', '#fff', '#4488ff', '#fff', '#4488ff', '#fff'];
+
+            radii.forEach((r, i) => {
+                ctx.beginPath();
+                ctx.arc(centerX, houseY, r, 0, Math.PI * 2);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Button
+            ctx.beginPath();
+            ctx.arc(centerX, houseY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#fff';
+            ctx.fill();
+            ctx.strokeStyle = '#000';
+            ctx.stroke();
+
+            // Center line
+            ctx.beginPath();
+            ctx.moveTo(centerX, 0);
+            ctx.lineTo(centerX, canvas.height);
+            ctx.strokeStyle = '#888';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw rocks
+            rocks.forEach((rock, i) => {
+                ctx.beginPath();
+                ctx.arc(rock.x, rock.y, 15, 0, Math.PI * 2);
+                ctx.fillStyle = rock.color === 'red' ? '#cc0000' : '#ccaa00';
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+
+                // Rock number
+                ctx.fillStyle = '#fff';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(i + 1, rock.x, rock.y + 4);
+            });
+
+            // Current color indicator
+            ctx.fillStyle = currentColor === 'red' ? '#cc0000' : '#ccaa00';
+            ctx.fillRect(10, 10, 30, 30);
+            ctx.strokeStyle = '#fff';
+            ctx.strokeRect(10, 10, 30, 30);
+        }
+
+        canvas.addEventListener('click', (e) => {
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            rocks.push({ x, y, color: currentColor });
+            currentColor = currentColor === 'red' ? 'yellow' : 'red';
+            drawHouse();
+        });
+
+        function clearHouse() {
+            rocks = [];
+            currentColor = 'red';
+            drawHouse();
+            document.getElementById('suggestion').style.display = 'none';
+        }
+
+        async function askAI() {
+            const data = {
+                rocks: rocks,
+                team: document.getElementById('team').value,
+                hammer: document.getElementById('hammer').value,
+                score_red: parseInt(document.getElementById('score-red').value),
+                score_yellow: parseInt(document.getElementById('score-yellow').value),
+                end: parseInt(document.getElementById('end').value),
+                throws_remaining: parseInt(document.getElementById('throws').value)
+            };
+
+            try {
+                // Get suggestion
+                const suggestRes = await fetch('/shot_api/suggest', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const suggestion = await suggestRes.json();
+
+                // Get analysis
+                const analyzeRes = await fetch('/shot_api/analyze', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rocks: rocks })
+                });
+                const analysis = await analyzeRes.json();
+
+                // Display results
+                document.getElementById('shot-name').textContent =
+                    suggestion.shot.toUpperCase() + (suggestion.target ? ' - ' + suggestion.target.replace('_', ' ') : '');
+                document.getElementById('confidence').textContent =
+                    'Confidence: ' + Math.round(suggestion.confidence * 100) + '%';
+                document.getElementById('reasoning').textContent = suggestion.reasoning;
+
+                document.getElementById('red-count').textContent = analysis.red_in_house;
+                document.getElementById('yellow-count').textContent = analysis.yellow_in_house;
+                document.getElementById('shot-rock').textContent =
+                    analysis.shot_rock ? analysis.shot_rock.toUpperCase() : 'None';
+
+                document.getElementById('suggestion').style.display = 'block';
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+
+        // Initial draw
+        drawHouse();
+    </script>
+</body>
+</html>

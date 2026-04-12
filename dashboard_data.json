@@ -1,0 +1,48 @@
+{
+  "game_state": {
+    "possession": "team_red",
+    "next_shooter": null,
+    "score": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "end": 1,
+    "state": "idle",
+    "throws": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "total_throws": 0
+  },
+  "locked_button": {
+    "near": [
+      207.0,
+      375.0
+    ],
+    "far": [
+      222.0,
+      374.0
+    ]
+  },
+  "locked_house_size": {
+    "near": null,
+    "far": null
+  },
+  "current_raw_detections": {
+    "far": [],
+    "near": []
+  },
+  "wide_data": {
+    "wide_rocks": [],
+    "deliveries": false,
+    "video_timestamp": "N/A"
+  },
+  "system_status": {
+    "last_score": "No end completed yet",
+    "fps": 0.0,
+    "model": "fcc-curling-rock-detection/17"
+  },
+  "debug_logs": [],
+  "received_at": "2026-04-11 12:35:30",
+  "last_update": 1775939730.7836041
+}

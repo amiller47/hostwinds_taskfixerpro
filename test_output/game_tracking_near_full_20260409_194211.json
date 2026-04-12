@@ -1,0 +1,32 @@
+{
+  "video": "near_full",
+  "frames_processed": 100,
+  "state_changes": [
+    {
+      "frame": 5,
+      "video_time": 0.6813033055765835,
+      "state": "idle",
+      "throws": 0,
+      "end": 1
+    }
+  ],
+  "events": [],
+  "final_state": {
+    "state": "idle",
+    "end": 1,
+    "hammer": "team_yellow",
+    "possession": "team_red",
+    "scores": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "throws": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "total_throws": 0,
+    "near_rocks": 13,
+    "far_rocks": 0,
+    "last_update": 1775792531.6803398
+  }
+}

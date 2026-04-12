@@ -1,0 +1,64 @@
+{
+  "video": "near_full",
+  "start_frame": 2000,
+  "frames_processed": 100,
+  "state_changes": [
+    {
+      "frame": 2005,
+      "video_time": 273.20262553620995,
+      "state": "idle",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2160,
+      "video_time": 294.32302800908406,
+      "state": "delivery_in_progress",
+      "throws": 0,
+      "end": 1
+    },
+    {
+      "frame": 2180,
+      "video_time": 297.04824123139036,
+      "state": "rock_in_flight",
+      "throws": 0,
+      "end": 1
+    }
+  ],
+  "events": [
+    {
+      "time": 1775834428.3048184,
+      "state": "delivery_in_progress",
+      "event": "delivery_started",
+      "details": {
+        "camera": "near"
+      }
+    },
+    {
+      "time": 1775834431.4394941,
+      "state": "rock_in_flight",
+      "event": "throw_released_timeout",
+      "details": {
+        "camera": "near"
+      }
+    }
+  ],
+  "final_state": {
+    "state": "rock_in_flight",
+    "end": 1,
+    "hammer": "team_yellow",
+    "possession": "team_red",
+    "scores": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "throws": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "total_throws": 0,
+    "near_rocks": 11,
+    "far_rocks": 0,
+    "last_update": 1775834492.0875957
+  }
+}

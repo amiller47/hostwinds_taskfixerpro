@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling Bingo</title>
+    <style>
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 { color: #0f0; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .bingo-card {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin: 20px auto;
+            max-width: 500px;
+        }
+        .bingo-cell {
+            background: #1a1a1a;
+            border: 2px solid #444;
+            border-radius: 8px;
+            padding: 10px;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            text-align: center;
+        }
+        .bingo-cell.marked {
+            background: #0a0;
+            border-color: #0f0;
+        }
+        .bingo-cell.free {
+            background: #333;
+            border-color: #666;
+            font-weight: bold;
+        }
+        .bingo-cell:hover {
+            background: #2a2a2a;
+            cursor: pointer;
+        }
+        .header {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .header-cell {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0f0;
+        }
+        button {
+            background: #0a0;
+            color: #111;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            margin: 10px;
+        }
+        button:hover { background: #0c0; }
+        .events {
+            margin: 20px 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+        }
+        .event {
+            display: inline-block;
+            background: #2a2a2a;
+            padding: 5px 10px;
+            margin: 3px;
+            border-radius: 4px;
+        }
+        .event.occurred { background: #0a0; }
+        .winner {
+            background: #f00;
+            color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-size: 24px;
+            animation: pulse 1s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🥌 Curling Bingo 🥌</h1>
+        <p>Watch the game and mark off events as they happen!</p>
+
+        <button onclick="generateCard()">Generate New Card</button>
+        <button onclick="refreshStatus()">Refresh Status</button>
+
+        <div id="card-container">
+            <p>Click "Generate New Card" to start!</p>
+        </div>
+
+        <div class="events" id="events-container">
+            <h3>Events Occurred: <span id="events-count">0</span></h3>
+            <div id="events-list"></div>
+        </div>
+
+        <div id="winner" style="display: none;"></div>
+    </div>
+
+    <script>
+        let cardId = null;
+
+        async function generateCard() {
+            try {
+                const res = await fetch('/bingo_api/card');
+                const card = await res.json();
+                cardId = card.card_id;
+                renderCard(card);
+            } catch (e) {
+                alert('Error generating card: ' + e);
+            }
+        }
+
+        function renderCard(card) {
+            const container = document.getElementById('card-container');
+            let html = '<div class="header">';
+            for (const letter of 'BINGO') {
+                html += `<div class="header-cell">${letter}</div>`;
+            }
+            html += '</div><div class="bingo-card">';
+
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const event = card.events[row][col];
+                    const marked = card.marked[row][col];
+                    const isFree = event === 'FREE';
+
+                    const cellClass = isFree ? 'free' : (marked ? 'marked' : '');
+                    const eventName = isFree ? 'FREE' : event;
+
+                    html += `<div class="bingo-cell ${cellClass}" onclick="markCell(${row}, ${col})">`;
+                    html += eventName.replace(/_/g, ' ');
+                    html += '</div>';
+                }
+            }
+
+            html += '</div>';
+            html += `<p>Card ID: ${card.card_id}</p>`;
+            container.innerHTML = html;
+        }
+
+        async function markCell(row, col) {
+            if (!cardId) {
+                alert('Generate a card first!');
+                return;
+            }
+
+            try {
+                // In a real implementation, this would call the server
+                // For now, just toggle locally
+                const res = await fetch(`/bingo_api/card/${cardId}`);
+                const status = await res.json();
+
+                if (status.has_bingo) {
+                    showWinner();
+                }
+            } catch (e) {
+                console.error('Error marking cell:', e);
+            }
+        }
+
+        async function refreshStatus() {
+            if (!cardId) return;
+
+            try {
+                const res = await fetch(`/bingo_api/card/${cardId}`);
+                const status = await res.json();
+                renderCard({card_id: cardId, events: status.events, marked: status.marked});
+
+                if (status.has_bingo) {
+                    showWinner();
+                }
+
+                // Update events list
+                const eventsRes = await fetch('/bingo_api/occurred');
+                const events = await eventsRes.json();
+                document.getElementById('events-count').textContent = events.length;
+                document.getElementById('events-list').innerHTML =
+                    events.map(e => `<span class="event">${e}</span>`).join('');
+            } catch (e) {
+                console.error('Error refreshing:', e);
+            }
+        }
+
+        function showWinner() {
+            const winner = document.getElementById('winner');
+            winner.innerHTML = '🎉 BINGO! 🎉';
+            winner.style.display = 'block';
+        }
+
+        // Auto-refresh every 5 seconds
+        setInterval(refreshStatus, 5000);
+    </script>
+</body>
+</html>

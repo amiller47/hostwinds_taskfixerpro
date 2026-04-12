@@ -1,0 +1,1146 @@
+{
+  "frames_processed": 50,
+  "elapsed": 129.78607606887817,
+  "final_state": {
+    "state": "idle",
+    "end": 1,
+    "hammer": "team_yellow",
+    "possession": "team_red",
+    "scores": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "throws": {
+      "team_red": 0,
+      "team_yellow": 0
+    },
+    "total_throws": 0,
+    "near_rocks": 14,
+    "far_rocks": 1,
+    "last_update": 1775788438.5421243
+  },
+  "events": [],
+  "frame_results": [
+    {
+      "frame": 0,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 7,
+        "far_rocks": 0,
+        "last_update": 1775788312.6017597
+      },
+      "house": {
+        "camera": "near",
+        "scoring_team": null,
+        "points": 0,
+        "red_rocks": 0,
+        "yellow_rocks": 0,
+        "visualization": "  HOUSE STATE\n  ------------------------------\n  No rocks in house (blank)\n\n  Red rocks in house: 0\n  Yellow rocks in house: 0"
+      }
+    },
+    {
+      "frame": 1,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 8,
+        "far_rocks": 0,
+        "last_update": 1775788317.3925853
+      },
+      "house": null
+    },
+    {
+      "frame": 2,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 0,
+        "last_update": 1775788321.2016532
+      },
+      "house": null
+    },
+    {
+      "frame": 3,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788324.6815662
+      },
+      "house": null
+    },
+    {
+      "frame": 4,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788327.4325793
+      },
+      "house": null
+    },
+    {
+      "frame": 5,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788330.3442574
+      },
+      "house": null
+    },
+    {
+      "frame": 6,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788332.9771388
+      },
+      "house": null
+    },
+    {
+      "frame": 7,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788335.9482884
+      },
+      "house": null
+    },
+    {
+      "frame": 8,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788339.2662582
+      },
+      "house": null
+    },
+    {
+      "frame": 9,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788342.5453339
+      },
+      "house": null
+    },
+    {
+      "frame": 10,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 0,
+        "last_update": 1775788345.197492
+      },
+      "house": null
+    },
+    {
+      "frame": 11,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788347.4429827
+      },
+      "house": null
+    },
+    {
+      "frame": 12,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 0,
+        "last_update": 1775788349.4590104
+      },
+      "house": null
+    },
+    {
+      "frame": 13,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 0,
+        "last_update": 1775788352.1066282
+      },
+      "house": null
+    },
+    {
+      "frame": 14,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 0,
+        "last_update": 1775788354.215144
+      },
+      "house": null
+    },
+    {
+      "frame": 15,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 0,
+        "last_update": 1775788356.304404
+      },
+      "house": null
+    },
+    {
+      "frame": 16,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 0,
+        "last_update": 1775788358.3588243
+      },
+      "house": null
+    },
+    {
+      "frame": 17,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 0,
+        "last_update": 1775788360.4401648
+      },
+      "house": null
+    },
+    {
+      "frame": 18,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 0,
+        "last_update": 1775788362.601651
+      },
+      "house": null
+    },
+    {
+      "frame": 19,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 0,
+        "last_update": 1775788364.7574866
+      },
+      "house": null
+    },
+    {
+      "frame": 20,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788367.0804305
+      },
+      "house": {
+        "camera": "near",
+        "scoring_team": null,
+        "points": 0,
+        "red_rocks": 0,
+        "yellow_rocks": 0,
+        "visualization": "  HOUSE STATE\n  ------------------------------\n  No rocks in house (blank)\n\n  Red rocks in house: 0\n  Yellow rocks in house: 0"
+      }
+    },
+    {
+      "frame": 21,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 0,
+        "last_update": 1775788369.6649506
+      },
+      "house": null
+    },
+    {
+      "frame": 22,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 1,
+        "last_update": 1775788371.7574775
+      },
+      "house": null
+    },
+    {
+      "frame": 23,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 1,
+        "last_update": 1775788376.7451732
+      },
+      "house": null
+    },
+    {
+      "frame": 24,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 7,
+        "far_rocks": 1,
+        "last_update": 1775788378.8728843
+      },
+      "house": null
+    },
+    {
+      "frame": 25,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 7,
+        "far_rocks": 1,
+        "last_update": 1775788381.5764725
+      },
+      "house": null
+    },
+    {
+      "frame": 26,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 8,
+        "far_rocks": 1,
+        "last_update": 1775788383.3363788
+      },
+      "house": null
+    },
+    {
+      "frame": 27,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 1,
+        "last_update": 1775788385.1616764
+      },
+      "house": null
+    },
+    {
+      "frame": 28,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 1,
+        "last_update": 1775788387.464974
+      },
+      "house": null
+    },
+    {
+      "frame": 29,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 1,
+        "last_update": 1775788389.752353
+      },
+      "house": null
+    },
+    {
+      "frame": 30,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788391.5483556
+      },
+      "house": null
+    },
+    {
+      "frame": 31,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 1,
+        "last_update": 1775788393.4465492
+      },
+      "house": null
+    },
+    {
+      "frame": 32,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788395.381882
+      },
+      "house": null
+    },
+    {
+      "frame": 33,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788397.1980116
+      },
+      "house": null
+    },
+    {
+      "frame": 34,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 1,
+        "last_update": 1775788399.509862
+      },
+      "house": null
+    },
+    {
+      "frame": 35,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 2,
+        "last_update": 1775788401.4935002
+      },
+      "house": null
+    },
+    {
+      "frame": 36,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 13,
+        "far_rocks": 1,
+        "last_update": 1775788403.3792427
+      },
+      "house": null
+    },
+    {
+      "frame": 37,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 1,
+        "last_update": 1775788405.4235961
+      },
+      "house": null
+    },
+    {
+      "frame": 38,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 9,
+        "far_rocks": 1,
+        "last_update": 1775788409.2318788
+      },
+      "house": null
+    },
+    {
+      "frame": 39,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 1,
+        "last_update": 1775788411.141431
+      },
+      "house": null
+    },
+    {
+      "frame": 40,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 1,
+        "last_update": 1775788412.9914396
+      },
+      "house": {
+        "camera": "near",
+        "scoring_team": null,
+        "points": 0,
+        "red_rocks": 0,
+        "yellow_rocks": 0,
+        "visualization": "  HOUSE STATE\n  ------------------------------\n  No rocks in house (blank)\n\n  Red rocks in house: 0\n  Yellow rocks in house: 0"
+      }
+    },
+    {
+      "frame": 41,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788415.4856327
+      },
+      "house": null
+    },
+    {
+      "frame": 42,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 1,
+        "last_update": 1775788419.2935784
+      },
+      "house": null
+    },
+    {
+      "frame": 43,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 10,
+        "far_rocks": 1,
+        "last_update": 1775788422.9224253
+      },
+      "house": null
+    },
+    {
+      "frame": 44,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 11,
+        "far_rocks": 1,
+        "last_update": 1775788425.1941774
+      },
+      "house": null
+    },
+    {
+      "frame": 45,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 1,
+        "last_update": 1775788427.8743734
+      },
+      "house": null
+    },
+    {
+      "frame": 46,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 2,
+        "last_update": 1775788430.0862617
+      },
+      "house": null
+    },
+    {
+      "frame": 47,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 3,
+        "last_update": 1775788432.9546707
+      },
+      "house": null
+    },
+    {
+      "frame": 48,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 12,
+        "far_rocks": 2,
+        "last_update": 1775788435.6318479
+      },
+      "house": null
+    },
+    {
+      "frame": 49,
+      "state": {
+        "state": "idle",
+        "end": 1,
+        "hammer": "team_yellow",
+        "possession": "team_red",
+        "scores": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "throws": {
+          "team_red": 0,
+          "team_yellow": 0
+        },
+        "total_throws": 0,
+        "near_rocks": 14,
+        "far_rocks": 1,
+        "last_update": 1775788438.5421243
+      },
+      "house": null
+    }
+  ]
+}

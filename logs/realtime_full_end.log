@@ -1,0 +1,52 @@
+REAL-TIME GAME TRACKING WITH DASHBOARD
+============================================================
+Calibration: rtsp
+Near button: [349.0, 697.0]
+Far button: [360.0, 596.0]
+Video: /home/curl/Videos/curling/cam2_20260330_194005.mp4
+Frames: 13210 @ 7.3 fps
+Starting at frame 2000
+Dashboard initialized: /home/curl/curling_vision/dashboard_data.json
+
+Processing... (Dashboard updates every 5 frames)
+
+Frame 2005: idle | Throws: 0
+Frame 2160: delivery_in_progress | Throws: 0
+Frame 2180: rock_in_flight | Throws: 0
+Frame 2200: rocks_settling | Throws: 0
+Frame 2230: throw_complete | Throws: 0
+Frame 2235: idle | Throws: 1
+API error: HTTPSConnectionPool(host='detect.roboflow.com', port=443): Read timed out. (read timeout=15)
+Frame 2465: delivery_in_progress | Throws: 1
+Frame 2480: rock_in_flight | Throws: 1
+Frame 2490: rocks_settling | Throws: 1
+Frame 2515: throw_complete | Throws: 1
+Frame 2520: idle | Throws: 2
+Frame 3120: delivery_in_progress | Throws: 2
+Frame 3145: rock_in_flight | Throws: 2
+Frame 3165: rocks_settling | Throws: 2
+Frame 3200: throw_complete | Throws: 2
+Frame 3205: idle | Throws: 3
+API error: HTTPSConnectionPool(host='detect.roboflow.com', port=443): Read timed out. (read timeout=15)
+Frame 3820: delivery_in_progress | Throws: 3
+Frame 3830: rock_in_flight | Throws: 3
+Frame 3850: rocks_settling | Throws: 3
+Frame 3885: throw_complete | Throws: 3
+Frame 3890: idle | Throws: 4
+Frame 4155: delivery_in_progress | Throws: 4
+Frame 4180: rock_in_flight | Throws: 4
+Frame 4190: idle | Throws: 4
+Frame 5230: delivery_in_progress | Throws: 4
+Frame 5245: rock_in_flight | Throws: 4
+Frame 5250: idle | Throws: 4
+Frame 6210: delivery_in_progress | Throws: 4
+Frame 6245: rock_in_flight | Throws: 4
+Frame 6250: idle | Throws: 4
+API error: HTTPSConnectionPool(host='detect.roboflow.com', port=443): Read timed out. (read timeout=15)
+API error: HTTPSConnectionPool(host='detect.roboflow.com', port=443): Read timed out. (read timeout=15)
+
+Processed 2196 frames in 2132.3s (1.03 fps)
+Final state: idle
+Total throws: 4
+
+Dashboard at: http://localhost:5000/

@@ -1,0 +1,4 @@
+# Curling Vision System Dependencies
+opencv-python-headless>=4.10.0
+flask>=2.2.0
+requests>=2.28.0

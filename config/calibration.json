@@ -1,0 +1,134 @@
+{
+  "calibration_sets": {
+    "cropped": {
+      "far": {
+        "resolution": [
+          446,
+          720
+        ],
+        "button": [
+          222.0,
+          374.0
+        ],
+        "house_size_estimate": 400,
+        "source": "/home/curl/Videos/sheet5FarCrop.mp4",
+        "notes": "Cropped test video"
+      },
+      "near": {
+        "resolution": [
+          428,
+          720
+        ],
+        "button": [
+          207.0,
+          375.0
+        ],
+        "house_size_estimate": 400,
+        "source": "/home/curl/Videos/sheet5NearCrop.mp4",
+        "notes": "Cropped test video"
+      }
+    },
+    "rtsp": {
+      "far": {
+        "resolution": [
+          720,
+          1280
+        ],
+        "button": [
+          360.0,
+          596.0
+        ],
+        "house_size": 748.7,
+        "button_measured": [
+          363.0,
+          598.5
+        ],
+        "button_std": [
+          6.9,
+          12.08
+        ],
+        "button_confidence": 0.919,
+        "source": "rtsp://...233",
+        "notes": "Live RTSP and full game recordings (cam1)"
+      },
+      "near": {
+        "resolution": [
+          720,
+          1280
+        ],
+        "button": [
+          349.0,
+          697.0
+        ],
+        "house_size": 748.7,
+        "source": "rtsp://...241",
+        "notes": "Live RTSP and full game recordings (cam2) - estimated from far camera"
+      },
+      "wide": {
+        "resolution": [1280, 720],
+        "button": [637.0, 134.0],
+        "button_std": [2.0, 1.5],
+        "house_size": null,
+        "source": "/home/curl/Videos/curling/cam3_20260330_194005.mp4",
+        "model": "fcc-instance-detection/7",
+        "notes": "Center button (sheet 5) selected from 3 detected buttons. Wide camera sees multiple sheets."
+      }
+    }
+  },
+  "test_results": {
+    "far_crop_20260408": {
+      "frames": 30,
+      "button_measured": [
+        222.0,
+        371.3
+      ],
+      "button_std": [
+        0.0,
+        0.25
+      ],
+      "button_confidence": 0.936,
+      "rock_counts": {
+        "yellow": 68,
+        "red": 16
+      }
+    },
+    "near_crop_20260408": {
+      "frames": 30,
+      "button_measured": [
+        207.2,
+        373.5
+      ],
+      "button_std": [
+        0.69,
+        0.87
+      ],
+      "button_confidence": 0.903,
+      "rock_counts": {
+        "yellow": 56,
+        "red": 50
+      }
+    },
+    "far_full_20260408": {
+      "frames": 50,
+      "button_measured": [
+        363.0,
+        598.5
+      ],
+      "button_std": [
+        6.9,
+        12.08
+      ],
+      "button_confidence": 0.919,
+      "rock_counts": {
+        "yellow": 18,
+        "red": 16
+      }
+    }
+  },
+  "validation_thresholds": {
+    "button_confidence_min": 0.85,
+    "button_std_max": 20.0,
+    "validation_frames": 5,
+    "notes": "Quick validation: 5 frames should get button within 20px std dev at >85% confidence"
+  }
+}
