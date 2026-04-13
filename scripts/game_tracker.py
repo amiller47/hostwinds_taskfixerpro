@@ -242,6 +242,9 @@ class GameTracker:
     def __init__(self, calibration: dict, config: dict):
         self.calibration = calibration
         self.config = config
+        
+        # Persistent detections for dashboard (prevents flickering)
+        self.last_detections: Dict[str, List] = {"far": [], "near": []}
 
         # State
         self.state = GameState.IDLE
@@ -296,7 +299,7 @@ class GameTracker:
 
     def _is_in_house(self, rock: Rock, camera: str) -> bool:
         """Check if rock is in the house."""
-        house_size = self.calibration.get(camera, {}).get("house_size")
+        house_size = self.calibration.get(camera, {}).get("house_size") or self.calibration.get(camera, {}).get("house_size_estimate")
         if house_size is None:
             return False
 
@@ -356,6 +359,10 @@ class GameTracker:
         This is the main entry point for the state machine.
         """
         self.last_update = timestamp
+
+        # Store detections for dashboard (prevents flickering)
+        det_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in detections]
+        self.last_detections[camera] = det_list
 
         # Update rock tracking
         tracker = self._get_active_tracker(camera)
@@ -554,8 +561,8 @@ class GameTracker:
         cal = self.calibration
         near_button = cal.get("near", {}).get("button")
         far_button = cal.get("far", {}).get("button")
-        near_house = cal.get("near", {}).get("house_size")
-        far_house = cal.get("far", {}).get("house_size")
+        near_house = cal.get("near", {}).get("house_size") or cal.get("near", {}).get("house_size_estimate")
+        far_house = cal.get("far", {}).get("house_size") or cal.get("far", {}).get("house_size_estimate")
         
         # Get last score info
         last_score = "No end completed yet"
@@ -581,7 +588,7 @@ class GameTracker:
                 "near": near_house,
                 "far": far_house
             },
-            "current_raw_detections": {"far": [], "near": []},
+            "current_raw_detections": self.last_detections,
             "wide_data": {
                 "wide_rocks": [],
                 "deliveries": False,

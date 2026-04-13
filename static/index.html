@@ -113,8 +113,9 @@
     <div class="debug-panel">
         <h3>🔧 Game State</h3>
         <div class="state"><strong>State:</strong> <span id="game-state">idle</span></div>
-        <div class="state"><strong>Rocks Near:</strong> <span id="rocks-near">0</span></div>
-        <div class="state"><strong>Rocks Far:</strong> <span id="rocks-far">0</span></div>
+        <div class="state"><strong>Rocks Near:</strong> <span id="rocks-near">0</span> (<span id="detections-near">0</span> det)</div>
+        <div class="state"><strong>Rocks Far:</strong> <span id="rocks-far">0</span> (<span id="detections-far">0</span> det)</div>
+        <div class="state"><strong>Calibration:</strong> <span id="calibration-status">checking...</span></div>
         <h3>📋 Recent Events</h3>
         <div id="event-log"></div>
     </div>
@@ -171,36 +172,71 @@
                 ctx.stroke();
             });
 
-            // Draw rocks
+            // Draw rocks in house
             const button = data.locked_button?.[end];
-            const houseSize = data.locked_house_size?.[end] || 400;
+            const houseSize = data.locked_house_size?.[end];
             const detections = data.current_raw_detections?.[end] || [];
             
-            const scale = 180.0 / (houseSize / 2);  // Scale to canvas
+            // Debug: show detection count on each house
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Detections: ${detections.length}`, 10, 20);
+            
+            // Debug: log what we have
+            console.log(`${end} end: button=${JSON.stringify(button)}, houseSize=${houseSize}, detections=${detections.length}`);
+            
+            // Only plot if we have calibration AND detections
+            if (!button || !houseSize) {
+                // No calibration - show message
+                ctx.fillStyle = '#666';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Calibration needed', centerX, houseY);
+                return;
+            }
+            
+            // Scale: houseSize in pixels maps to 180px radius on canvas
+            const scale = 180.0 / (houseSize / 2);
 
             detections.forEach(det => {
-                if (det[0].includes('rock')) {
-                    let rx = det[1];
-                    let ry = det[2];
-                    
-                    // If we have button calibration, offset from there
-                    if (button) {
-                        const dx = rx - button[0];
-                        const dy = ry - button[1];
-                        rx = centerX + dx * scale;
-                        ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
-                    }
-
-                    const color = det[0].includes('red') ? '#cc0000' : '#ccaa00';
-                    
-                    ctx.beginPath();
-                    ctx.arc(rx, ry, 14, 0, Math.PI * 2);
-                    ctx.fillStyle = color;
-                    ctx.fill();
-                    ctx.strokeStyle = '#000';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
+                // det format: [class, x, y, confidence]
+                const detClass = det[0];
+                const detX = det[1];
+                const detY = det[2];
+                
+                if (!detClass || !detClass.includes('rock')) {
+                    return;
                 }
+                
+                // Calculate position relative to button
+                const dx = detX - button[0];
+                const dy = detY - button[1];
+                
+                // Transform to canvas coordinates
+                let rx = centerX + dx * scale;
+                let ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                
+                // Clamp to canvas bounds
+                rx = Math.max(20, Math.min(width - 20, rx));
+                ry = Math.max(20, Math.min(height - 20, ry));
+                
+                // Draw rock
+                const color = detClass.includes('red') ? '#cc0000' : '#ccaa00';
+                
+                ctx.beginPath();
+                ctx.arc(rx, ry, 14, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Debug: show original coords
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${Math.round(detX)},${Math.round(detY)}`, rx, ry + 4);
             });
         }
 
@@ -219,6 +255,18 @@
                     document.getElementById('throws-yellow').textContent = gs.throws?.team_yellow || 0;
                     document.getElementById('rocks-near').textContent = gs.near_rocks || 0;
                     document.getElementById('rocks-far').textContent = gs.far_rocks || 0;
+                    
+                    // Detection counts
+                    const nearDets = data.current_raw_detections?.near?.length || 0;
+                    const farDets = data.current_raw_detections?.far?.length || 0;
+                    document.getElementById('detections-near').textContent = nearDets;
+                    document.getElementById('detections-far').textContent = farDets;
+                    
+                    // Calibration status
+                    const nearCal = data.locked_button?.near && data.locked_house_size?.near;
+                    const farCal = data.locked_button?.far && data.locked_house_size?.far;
+                    document.getElementById('calibration-status').textContent = 
+                        (nearCal ? 'Near OK' : 'Near missing') + ' | ' + (farCal ? 'Far OK' : 'Far missing');
                     
                     // Possession
                     const possession = gs.possession || 'team_red';

@@ -93,9 +93,15 @@ def update_dashboard(tracker, detections=None, frame=None):
     """Write current state to dashboard file."""
     data = tracker.get_dashboard_data()
 
-    # Add raw detections
+    # Persist detections across calls (don't clear other camera)
+    # This prevents flickering when one camera updates before the other
     if detections:
-        data["current_raw_detections"] = detections
+        current = data.get("current_raw_detections", {})
+        # Merge new detections, keeping old values for cameras not in this update
+        for camera in ["far", "near"]:
+            if camera in detections:
+                current[camera] = detections[camera]
+        data["current_raw_detections"] = current
 
     # Write to file
     with open(DASHBOARD_FILE, "w") as f:
