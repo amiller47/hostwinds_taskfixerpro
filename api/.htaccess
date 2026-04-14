@@ -1,0 +1,28 @@
+# Enable PHP and set defaults
+AddHandler application/x-httpd-php .php
+
+# Enable URL rewriting (if mod_rewrite available)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Clean URLs for API endpoints
+    RewriteRule ^curling_data$ api/curling_data.php [L]
+    RewriteRule ^health$ api/health.php [L]
+    RewriteRule ^coach_api/games$ api/games.php [L]
+    RewriteRule ^coach_api/shots$ api/shots.php [L]
+    RewriteRule ^bingo_api/card$ api/bingo_card.php [L]
+    RewriteRule ^bingo_api/card/(.+)$ api/bingo_card.php?id=$1 [L]
+    RewriteRule ^bingo_api/occurred$ api/bingo_occurred.php [L]
+    RewriteRule ^shot_api/suggest$ api/shot_suggest.php [L]
+    RewriteRule ^shot_api/analyze$ api/shot_analyze.php [L]
+</IfModule>
+
+# Security - prevent directory listing
+Options -Indexes
+
+# CORS headers for API access
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
