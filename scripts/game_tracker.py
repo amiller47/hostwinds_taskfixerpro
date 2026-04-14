@@ -12,6 +12,9 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 from enum import Enum
 
+# Shot classification
+from shot_classifier import ShotClassifier, ShotType, RockState, format_shot_result
+
 
 class GameState(Enum):
     IDLE = "idle"
@@ -255,11 +258,20 @@ class GameTracker:
         self.end_scores: List[GameScore] = []
         self.throws = {"team_red": 0, "team_yellow": 0}
         self.total_throws = 0
+        
+        # Shot tracking for classification
+        self.rock_state_before_throw: List[RockState] = []
+        self.last_shot_type: Optional[str] = None
+        self.shot_history: List[dict] = []
 
         # Rock tracking (separate for near/far)
         self.near_tracker = RockTracker()
         self.far_tracker = RockTracker()
         self.wide_tracker = RockTracker()  # Wide camera sees both houses
+        
+        # Shot classifier
+        house_radius = calibration.get("near", {}).get("house_size", 748) // 2
+        self.shot_classifier = ShotClassifier(house_radius=house_radius)
 
         # Delivery tracking
         self.delivery_tracker = DeliveryTracker()
@@ -404,6 +416,8 @@ class GameTracker:
                     return
             
             if delivery_active:
+                # Capture rock state before throw for shot classification
+                self._capture_rock_state_before(camera)
                 self._transition_to(GameState.DELIVERY_IN_PROGRESS, timestamp)
                 self._log_event("delivery_started", {"camera": camera})
 
@@ -450,13 +464,31 @@ class GameTracker:
             self.total_throws += 1
             self.last_throw_time = timestamp
             self.last_activity_time = timestamp
+            
+            # Classify the shot
+            shot_result = self._classify_shot(camera)
+            self.last_shot_type = shot_result.shot_type.value if shot_result else None
+            shot_str = format_shot_result(shot_result) if shot_result else "unknown"
 
             self._log_event("throw_complete", {
                 "team": self.possession,
                 "throws_red": self.throws["team_red"],
                 "throws_yellow": self.throws["team_yellow"],
-                "total": self.total_throws
+                "total": self.total_throws,
+                "shot_type": self.last_shot_type,
+                "shot_details": shot_result.details if shot_result else {}
             })
+            
+            # Record shot in history
+            if shot_result:
+                self.shot_history.append({
+                    "end": self.current_end,
+                    "throw": self.total_throws,
+                    "team": self.possession,
+                    "shot_type": shot_result.shot_type.value,
+                    "confidence": shot_result.confidence,
+                    "details": shot_result.details
+                })
 
             # Check for end completion
             if self.total_throws >= 16:
@@ -506,6 +538,41 @@ class GameTracker:
         """Transition to a new state."""
         self.state = new_state
         self.state_entered_time = timestamp
+    
+    def _capture_rock_state_before(self, camera: str):
+        """Capture current rock state before a throw for classification."""
+        tracker = self._get_active_tracker(camera)
+        rocks = tracker.get_all_rocks()
+        
+        self.rock_state_before_throw = [
+            RockState(x=r.x, y=r.y, color=r.color)
+            for r in rocks
+        ]
+    
+    def _classify_shot(self, camera: str):
+        """Classify the shot based on before/after rock states."""
+        tracker = self._get_active_tracker(camera)
+        rocks_after = tracker.get_all_rocks()
+        
+        rock_state_after = [
+            RockState(x=r.x, y=r.y, color=r.color)
+            for r in rocks_after
+        ]
+        
+        # Get button position for this camera
+        button = self.calibration.get(camera, {}).get("button")
+        
+        try:
+            result = self.shot_classifier.classify_shot(
+                before_rocks=self.rock_state_before_throw,
+                after_rocks=rock_state_after,
+                throwing_team=self.possession,
+                button=tuple(button) if button else None
+            )
+            return result
+        except Exception as e:
+            self._log_event("shot_classify_error", {"error": str(e)})
+            return None
 
     def get_state(self) -> dict:
         """Get current game state as dict."""
