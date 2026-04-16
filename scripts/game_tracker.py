@@ -15,6 +15,9 @@ from enum import Enum
 # Shot classification
 from shot_classifier import ShotClassifier, ShotType, RockState, format_shot_result
 
+# Trajectory prediction
+from trajectory_predictor import TrajectoryPredictor, PredictedPosition, format_prediction, IceConditions
+
 
 class GameState(Enum):
     IDLE = "idle"
@@ -230,6 +233,124 @@ class DeliveryTracker:
         return delivery_active, delivery_just_ended
 
 
+class MotionBasedThrowDetector:
+    """
+    Detect throws based on rock motion when delivery class is unavailable.
+    
+    Fallback mechanism for models that don't have a "curling delivery" class.
+    Detects throws by:
+    1. New rock appearing in frame
+    2. Rock velocity exceeding threshold
+    3. Rock count changes over time
+    """
+    
+    def __init__(self, velocity_threshold: float = 50.0, min_frames_moving: int = 2):
+        self.velocity_threshold = velocity_threshold  # pixels per frame
+        self.min_frames_moving = min_frames_moving
+        
+        # Track previous rock states
+        self.prev_rock_count = {"red": 0, "yellow": 0}
+        self.throw_in_progress = False
+        self.throw_start_time = 0.0
+        self.moving_rock_id = None
+        self.frames_since_motion = 0
+        
+        # History for debugging
+        self.throw_events: List[dict] = []
+    
+    def detect_throw_start(
+        self, 
+        rocks: List[Rock], 
+        timestamp: float,
+        delivery_active: bool = False
+    ) -> Tuple[bool, Optional[str]]:
+        """
+        Detect if a throw has started based on rock motion.
+        
+        Returns (throw_started, reason) where reason is:
+        - "delivery": delivery class detected (passed through)
+        - "new_rock": new rock appeared
+        - "velocity": rock velocity exceeded threshold
+        - None: no throw detected
+        """
+        # If delivery is active, pass through
+        if delivery_active:
+            return False, None
+        
+        # Count rocks by color
+        rock_count = {"red": 0, "yellow": 0}
+        for rock in rocks:
+            if rock.color == "red":
+                rock_count["red"] += 1
+            else:
+                rock_count["yellow"] += 1
+        
+        # Check for moving rocks FIRST (higher priority than new rock)
+        # This catches rocks that are already being tracked
+        moving_rocks = [r for r in rocks if r.speed() > self.velocity_threshold]
+        if moving_rocks:
+            if not self.throw_in_progress:
+                self.throw_in_progress = True
+                self.throw_start_time = timestamp
+                self.frames_since_motion = 0
+                self.moving_rock_id = moving_rocks[0].id
+                self.prev_rock_count = rock_count.copy()
+                return True, "velocity"
+        
+        # Check for new rocks (throw started)
+        for color in ["red", "yellow"]:
+            if rock_count[color] > self.prev_rock_count[color]:
+                self.throw_in_progress = True
+                self.throw_start_time = timestamp
+                self.frames_since_motion = 0
+                self.prev_rock_count = rock_count.copy()
+                return True, "new_rock"
+        
+        self.prev_rock_count = rock_count.copy()
+        return False, None
+    
+    def detect_throw_complete(
+        self, 
+        rocks: List[Rock], 
+        timestamp: float,
+        min_settle_frames: int = 3
+    ) -> bool:
+        """
+        Detect if thrown rocks have settled.
+        
+        Returns True if all rocks are stationary for min_settle_frames.
+        """
+        if not self.throw_in_progress:
+            return False
+        
+        # Check if all rocks are stationary
+        moving_rocks = [r for r in rocks if r.speed() > self.velocity_threshold]
+        
+        if not moving_rocks:
+            self.frames_since_motion += 1
+            if self.frames_since_motion >= min_settle_frames:
+                return True
+        else:
+            self.frames_since_motion = 0
+        
+        return False
+    
+    def end_throw(self):
+        """Mark the throw as complete and reset state."""
+        self.throw_in_progress = False
+        self.moving_rock_id = None
+        self.frames_since_motion = 0
+    
+    def reset(self):
+        """Reset all tracking state."""
+        self.prev_rock_count = {"red": 0, "yellow": 0}
+        self.throw_in_progress = False
+        self.throw_start_time = 0.0
+        self.moving_rock_id = None
+        self.frames_since_motion = 0
+
+
+
 @dataclass
 class GameScore:
     """Score for a single end."""
@@ -275,6 +396,19 @@ class GameTracker:
 
         # Delivery tracking
         self.delivery_tracker = DeliveryTracker()
+        
+        # Motion-based throw detection (fallback when delivery class unavailable)
+        self.motion_detector = MotionBasedThrowDetector(
+            velocity_threshold=50.0,  # pixels per frame
+            min_frames_moving=2
+        )
+        self.use_motion_detection = True  # Set False if delivery class available
+        
+        # Trajectory prediction (requires 5+ fps for accuracy)
+        self.trajectory_predictor = TrajectoryPredictor(
+            ice_conditions=IceConditions.default(),
+            frame_rate=6.0
+        )
 
         # Timing
         self.last_update = 0.0
@@ -379,6 +513,12 @@ class GameTracker:
         # Update rock tracking
         tracker = self._get_active_tracker(camera)
         rocks = tracker.update(detections, timestamp)
+        
+        # Update trajectory predictions for all tracked rocks
+        for rock in rocks:
+            self.trajectory_predictor.update_rock(
+                rock.id, rock.x, rock.y, timestamp
+            )
 
         # Update delivery tracking
         delivery_active, delivery_ended = self.delivery_tracker.update(detections, timestamp)
@@ -404,6 +544,10 @@ class GameTracker:
     def _update_state(self, camera: str, delivery_active: bool, delivery_ended: bool, timestamp: float):
         """Update state machine based on current conditions."""
 
+        # Get current rock state for motion detection
+        tracker = self._get_active_tracker(camera)
+        rocks = tracker.get_all_rocks()
+
         if self.state == GameState.IDLE:
             # Check for inactivity timeout (end complete if no throws for a while)
             if self.total_throws > 0 and self.last_activity_time > 0:
@@ -415,11 +559,21 @@ class GameTracker:
                     self._transition_to(GameState.END_COMPLETE, timestamp)
                     return
             
+            # Try delivery detection first, then motion-based fallback
             if delivery_active:
                 # Capture rock state before throw for shot classification
                 self._capture_rock_state_before(camera)
                 self._transition_to(GameState.DELIVERY_IN_PROGRESS, timestamp)
-                self._log_event("delivery_started", {"camera": camera})
+                self._log_event("delivery_started", {"camera": camera, "method": "delivery_class"})
+            elif self.use_motion_detection:
+                # Motion-based throw detection (fallback when delivery class unavailable)
+                throw_started, reason = self.motion_detector.detect_throw_start(
+                    rocks, timestamp, delivery_active
+                )
+                if throw_started:
+                    self._capture_rock_state_before(camera)
+                    self._transition_to(GameState.ROCK_IN_FLIGHT, timestamp)
+                    self._log_event("throw_started", {"camera": camera, "method": "motion", "reason": reason})
 
         elif self.state == GameState.DELIVERY_IN_PROGRESS:
             if delivery_ended:
@@ -431,32 +585,48 @@ class GameTracker:
                 self._log_event("throw_released_timeout", {"camera": camera})
 
         elif self.state == GameState.ROCK_IN_FLIGHT:
-            tracker = self._get_active_tracker(camera)
             moving = tracker.get_moving_rocks()
             elapsed = timestamp - self.state_entered_time
 
+            # Check for throw completion via motion detector (fallback)
+            throw_complete = False
+            if self.use_motion_detection:
+                throw_complete = self.motion_detector.detect_throw_complete(rocks, timestamp)
+
             # Flight timeout takes priority
-            if elapsed > 3.0:
-                # After 3 seconds, assume rocks are settling
+            if elapsed > 3.0 or throw_complete:
+                # After 3 seconds or motion settled, assume rocks are settling
                 self._transition_to(GameState.ROCKS_SETTLING, timestamp)
-                self._log_event("rocks_settling", {"camera": camera, "elapsed": elapsed})
+                self._log_event("rocks_settling", {"camera": camera, "elapsed": elapsed, "motion_complete": throw_complete})
             elif len(moving) == 0 and elapsed < 1.0:
-                # No rocks moving very early - probably false delivery detection
+                # No rocks moving very early - probably false detection
+                # Reset motion detector and return to IDLE
+                if self.use_motion_detection:
+                    self.motion_detector.reset()
                 self._transition_to(GameState.IDLE, timestamp)
+                self._log_event("false_throw", {"camera": camera, "reason": "no_motion"})
 
         elif self.state == GameState.ROCKS_SETTLING:
-            tracker = self._get_active_tracker(camera)
             moving = tracker.get_moving_rocks()
 
-            if len(moving) == 0 or (timestamp - self.state_entered_time) > 5.0:
+            # Check settling via motion detector or traditional method
+            all_settled = len(moving) == 0
+            if self.use_motion_detection:
+                all_settled = self.motion_detector.detect_throw_complete(rocks, timestamp, min_settle_frames=3)
+
+            if all_settled or (timestamp - self.state_entered_time) > 5.0:
                 # All rocks settled or timeout
                 self._transition_to(GameState.THROW_COMPLETE, timestamp)
                 self._log_event("rocks_settled", {"camera": camera, "moving": len(moving)})
+                if self.use_motion_detection:
+                    self.motion_detector.end_throw()
 
             elif (timestamp - self.state_entered_time) > 10.0:
                 # Extended timeout - force complete
                 self._transition_to(GameState.THROW_COMPLETE, timestamp)
                 self._log_event("settling_timeout", {"camera": camera})
+                if self.use_motion_detection:
+                    self.motion_detector.end_throw()
 
         elif self.state == GameState.THROW_COMPLETE:
             # Record throw
@@ -531,6 +701,10 @@ class GameTracker:
             # Clear rock tracking
             self.near_tracker.clear()
             self.far_tracker.clear()
+            
+            # Reset motion detector for new end
+            if self.use_motion_detection:
+                self.motion_detector.reset()
 
             self._transition_to(GameState.IDLE, timestamp)
 
@@ -592,6 +766,44 @@ class GameTracker:
     def get_events(self, since: float = 0) -> List[dict]:
         """Get events since a timestamp."""
         return [e for e in self.events if e["time"] > since]
+    
+    def get_trajectory_predictions(self, camera: str = "near") -> List[dict]:
+        """
+        Get trajectory predictions for all moving rocks.
+        
+        Args:
+            camera: Which camera ("near" or "far")
+        
+        Returns:
+            List of prediction dicts with rock_id, predicted position, confidence
+        """
+        tracker = self._get_active_tracker(camera)
+        predictions = []
+        
+        # Get moving rocks
+        moving_ids = self.trajectory_predictor.get_moving_rocks(threshold=10.0)
+        
+        for rock_id in moving_ids:
+            pred = self.trajectory_predictor.predict_stop(rock_id)
+            if pred:
+                # Get rock color
+                rock = tracker.rocks.get(rock_id)
+                color = rock.color if rock else "unknown"
+                
+                predictions.append({
+                    "rock_id": rock_id,
+                    "color": color,
+                    "current_position": (rock.x, rock.y) if rock else None,
+                    "predicted_stop": {
+                        "x": pred.x,
+                        "y": pred.y,
+                        "confidence": pred.confidence,
+                        "time_to_stop": pred.estimated_stop_time,
+                        "distance": pred.distance_to_travel
+                    }
+                })
+        
+        return predictions
 
 
     def get_dashboard_data(self) -> dict:
@@ -666,6 +878,7 @@ class GameTracker:
                 "fps": 0.0,
                 "model": "fcc-curling-rock-detection/17"
             },
+            "trajectory_predictions": self.get_trajectory_predictions("near"),
             "debug_logs": debug_logs,
             "received_at": time.strftime("%Y-%m-%d %H:%M:%S"),
             "last_update": state["last_update"]
