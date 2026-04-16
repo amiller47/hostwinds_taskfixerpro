@@ -7,10 +7,15 @@ Processes detections and tracks game flow through a state machine.
 import json
 import time
 import math
+import sys
+import os
 from collections import defaultdict
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 from enum import Enum
+
+# Add scripts directory to path for local imports
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 # Shot classification
 from shot_classifier import ShotClassifier, ShotType, RockState, format_shot_result
