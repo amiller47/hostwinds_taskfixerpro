@@ -1,12 +1,25 @@
 # Quick Start Instructions — Curling Vision System
 
-## What's Working (April 11, 2026)
+## What's Working (April 16, 2026)
 
-- ✅ Game state machine (detects throws, tracks possession)
+- ✅ Game state machine (motion-based throw detection, tracks possession)
 - ✅ Dashboard server (Flask on port 5000)
 - ✅ Real-time video → dashboard bridge
-- ✅ Rock detection via Roboflow REST API
+- ✅ **Local inference** via Roboflow InferencePackage (no REST API!)
 - ✅ **Flexible video sources** (RTSP, YouTube, USB, files)
+- ✅ **Trajectory prediction** for moving rocks (requires Pi 5)
+- ✅ Shot classification (draw, takeout, guard, freeze, raise)
+- ✅ Curling Bingo integration
+- ✅ Coaching Review Tool
+
+## Platform
+
+**Pi 5 (16GB)** is recommended for best performance:
+- Near camera: 6.2 FPS
+- Wide camera: 4.1 FPS
+- Dual-camera: 6.1 FPS total
+
+**Pi 4** works but is slower (~0.9 FPS via REST API).
 
 ---
 
@@ -125,19 +138,25 @@ python3 scripts/game_recorder.py
 
 ## What to Expect
 
-**Processing speed:** ~0.9 fps on Pi (REST API)
+**Processing speed:** 
+- Pi 5 local inference: 6+ FPS
+- Pi 4 REST API: ~0.9 FPS
 
-**Dashboard updates:** Every 5 frames
+**Dashboard updates:** Every frame processed
 
 **Game state cycle:**
 ```
-idle → delivery_in_progress → rock_in_flight → rocks_settling → throw_complete → idle
+idle → rock_in_flight → rocks_settling → throw_complete → idle
 ```
 
-**Test results (April 10):**
-- 500 frames processed
-- 5 throws detected correctly
-- Possession alternated between teams
+**Throw detection:** Motion-based (velocity or new rocks appearing)
+- No "delivery" class required
+- Works with current model `fcc-curling-rock-detection/17`
+
+**Trajectory prediction:** Physics-based model predicts where moving rocks will stop
+- Friction decay + curl effect
+- Ice condition learning adjusts over time
+- Visual overlay on dashboard shows predicted path
 
 ---
 
@@ -157,12 +176,22 @@ idle → delivery_in_progress → rock_in_flight → rocks_settling → throw_co
 
 ---
 
-## Next Steps (Work in Progress)
+## Deployment
 
-- [ ] Wide camera integration (cam3)
-- [ ] Full end tracking (16 throws)
-- [ ] Scoring calculation
-- [ ] Deploy to Hostwinds
+**PHP API** ready for Hostwinds:
+- `api/` folder contains PHP endpoints
+- `api/deploy.sh` creates deployment package
+- See `api/README.md` for instructions
+
+**Blockers:**
+- Club closed until October (no live RTSP testing)
+- Waiting on Andy to deploy to taskfixerpro.com
+
+## Future Enhancements
+
+- [ ] ML model training for shot calling (collect data first)
+- [ ] Multi-sheet tracking
+- [ ] Broadcast overlay package
 
 ---
 
