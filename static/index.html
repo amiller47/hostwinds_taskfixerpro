@@ -116,6 +116,7 @@
         <div class="state"><strong>Rocks Near:</strong> <span id="rocks-near">0</span> (<span id="detections-near">0</span> det)</div>
         <div class="state"><strong>Rocks Far:</strong> <span id="rocks-far">0</span> (<span id="detections-far">0</span> det)</div>
         <div class="state"><strong>Calibration:</strong> <span id="calibration-status">checking...</span></div>
+        <div class="state"><strong>Trajectory:</strong> <span id="trajectory-status">No predictions</span></div>
         <h3>📋 Recent Events</h3>
         <div id="event-log"></div>
     </div>
@@ -238,6 +239,63 @@
                 ctx.textAlign = 'center';
                 ctx.fillText(`${Math.round(detX)},${Math.round(detY)}`, rx, ry + 4);
             });
+            
+            // Draw trajectory predictions for moving rocks
+            const predictions = data.trajectory_predictions || [];
+            predictions.forEach(pred => {
+                if (!pred.current_position || !pred.predicted_stop) return;
+                
+                // Get rock color
+                const rockColor = pred.color === 'red' ? '#cc0000' : '#ccaa00';
+                
+                // Current position in canvas coords
+                const curX = pred.current_position[0];
+                const curY = pred.current_position[1];
+                const dx = curX - button[0];
+                const dy = curY - button[1];
+                let startRx = centerX + dx * scale;
+                let startRy = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                
+                // Predicted stop position in canvas coords
+                const stopX = pred.predicted_stop.x;
+                const stopY = pred.predicted_stop.y;
+                const stopDx = stopX - button[0];
+                const stopDy = stopY - button[1];
+                let stopRx = centerX + stopDx * scale;
+                let stopRy = houseY + stopDy * scale * (end === 'far' ? -1 : 1);
+                
+                // Clamp to bounds
+                startRx = Math.max(20, Math.min(width - 20, startRx));
+                startRy = Math.max(20, Math.min(height - 20, startRy));
+                stopRx = Math.max(20, Math.min(width - 20, stopRx));
+                stopRy = Math.max(20, Math.min(height - 20, stopRy));
+                
+                // Draw trajectory line (dotted)
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = rockColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(startRx, startRy);
+                ctx.lineTo(stopRx, stopRy);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Draw ghost circle at predicted stop position
+                ctx.beginPath();
+                ctx.arc(stopRx, stopRy, 14, 0, Math.PI * 2);
+                ctx.strokeStyle = rockColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = rockColor.replace('cc', '66') + '40'; // semi-transparent fill
+                ctx.fill();
+                
+                // Show confidence
+                const conf = Math.round((pred.predicted_stop.confidence || 0) * 100);
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${conf}%`, stopRx, stopRy + 4);
+            });
         }
 
         function updateDashboard() {
@@ -267,6 +325,14 @@
                     const farCal = data.locked_button?.far && data.locked_house_size?.far;
                     document.getElementById('calibration-status').textContent = 
                         (nearCal ? 'Near OK' : 'Near missing') + ' | ' + (farCal ? 'Far OK' : 'Far missing');
+                    
+                    // Trajectory predictions status
+                    const trajPreds = data.trajectory_predictions || [];
+                    const movingCount = trajPreds.length;
+                    const trajStatus = movingCount > 0 
+                        ? `${movingCount} rock${movingCount > 1 ? 's' : ''} moving` 
+                        : 'No predictions';
+                    document.getElementById('trajectory-status').textContent = trajStatus;
                     
                     // Possession
                     const possession = gs.possession || 'team_red';
