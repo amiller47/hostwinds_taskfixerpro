@@ -1,12 +1,12 @@
 {
   "game_state": {
-    "possession": "team_red",
+    "possession": "team_yellow",
     "next_shooter": null,
     "score": {
       "team_red": 0,
-      "team_yellow": 0
+      "team_yellow": 1
     },
-    "end": 1,
+    "end": 5,
     "state": "idle",
     "throws": {
       "team_red": 0,
@@ -16,17 +16,17 @@
   },
   "locked_button": {
     "near": [
-      207.0,
-      375.0
+      349.0,
+      697.0
     ],
     "far": [
-      222.0,
-      374.0
+      360.0,
+      596.0
     ]
   },
   "locked_house_size": {
-    "near": null,
-    "far": null
+    "near": 748.7,
+    "far": 748.7
   },
   "current_raw_detections": {
     "far": [],
@@ -38,11 +38,22 @@
     "video_timestamp": "N/A"
   },
   "system_status": {
-    "last_score": "No end completed yet",
+    "last_score": "End 4: Red 0 - Yellow 1",
     "fps": 0.0,
     "model": "fcc-curling-rock-detection/17"
   },
-  "debug_logs": [],
-  "received_at": "2026-04-11 12:35:30",
-  "last_update": 1775939730.7836041
+  "debug_logs": [
+    "End 3 complete: Red 0 - Yellow 0",
+    "Delivery started (delivery_in_progress)",
+    "throw_released",
+    "rocks_settling",
+    "Rocks settled (0 moving)",
+    "Throw complete: team_red, total 1",
+    "Inactivity timeout (1 throws)",
+    "End 4 complete: Red 0 - Yellow 1",
+    "Delivery started (delivery_in_progress)",
+    "throw_released_timeout"
+  ],
+  "received_at": "2026-04-13 14:17:08",
+  "last_update": 1776118628.1633353
 }
