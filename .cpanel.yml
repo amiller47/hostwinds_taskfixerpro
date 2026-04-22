@@ -6,7 +6,9 @@ deployment:
     - /bin/mkdir -p $HOME/public_html/curling/js  
     - /bin/mkdir -p $HOME/public_html/curling/data
     - /bin/cp -f static/*.html $HOME/public_html/curling/
+    - /bin/cp -f static/*.php $HOME/public_html/curling/
     - /bin/cp -f api/*.php $HOME/public_html/curling/api/
     - /bin/cp -f api/.htaccess $HOME/public_html/curling/api/
     - /bin/chmod 755 $HOME/public_html/curling/data
+    - /bin/chmod 644 $HOME/public_html/curling/*.php $HOME/public_html/curling/api/*.php
     - /bin/echo "Deployed $(date)" >> $HOME/public_html/curling/data/deploy.log
