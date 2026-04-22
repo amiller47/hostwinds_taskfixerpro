@@ -32,7 +32,10 @@ API_KEY = CONFIG["api_key"]
 MODEL_ID = CONFIG["model_id"]
 
 # Hostwinds upload
-HOSTWINDS_URL = "https://taskfixerpro.com/curling/api/curling_update.php"
+# Primary: api/ directory (may not work due to PHP execution issues)
+# Fallback: root curling directory (more likely to work)
+HOSTWINDS_URL = "https://taskfixerpro.com/curling/simple_update.php"
+# Backup: "https://taskfixerpro.com/curling/api/curling_update.php"
 UPLOAD_INTERVAL = 3.0  # seconds
 _last_upload = 0.0
 _upload_enabled = False

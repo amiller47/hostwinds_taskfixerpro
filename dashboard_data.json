@@ -4,145 +4,49 @@
     "next_shooter": null,
     "score": {
       "team_red": 0,
-      "team_yellow": 0
+      "team_yellow": 3
     },
-    "end": 1,
+    "end": 7,
     "state": "idle",
     "throws": {
-      "team_red": 5,
-      "team_yellow": 5
+      "team_red": 0,
+      "team_yellow": 1
     },
-    "total_throws": 10
+    "total_throws": 1
   },
   "locked_button": {
     "near": [
-      207.0,
-      375.0
+      349.0,
+      697.0
     ],
     "far": [
-      222.0,
-      374.0
+      360.0,
+      596.0
     ]
   },
   "locked_house_size": {
-    "near": 400,
-    "far": 400
+    "near": 748.7,
+    "far": 748.7
   },
   "current_raw_detections": {
     "far": [
       [
-        "red-rock",
-        564.0,
-        1251.0,
-        0.9368847608566284
-      ],
-      [
         "Button",
-        349.0,
-        697.5,
-        0.9293875694274902
-      ],
-      [
-        "red-rock",
-        349.0,
-        1146.5,
-        0.9238920211791992
+        362.0,
+        596.0,
+        0.9215692281723022
       ],
       [
         "yellow-rock",
-        115.5,
-        1245.0,
-        0.9227491021156311
-      ],
-      [
-        "yellow-rock",
-        148.0,
-        1252.5,
-        0.9217562079429626
-      ],
-      [
-        "red-rock",
-        594.5,
-        1245.0,
-        0.9144237041473389
-      ],
-      [
-        "yellow-rock",
-        180.5,
-        1259.0,
-        0.9061993360519409
-      ],
-      [
-        "yellow-rock",
-        683.5,
-        1218.5,
-        0.9028681516647339
-      ],
-      [
-        "yellow-rock",
-        708.0,
-        1210.0,
-        0.9021497368812561
-      ],
-      [
-        "yellow-rock",
-        654.5,
-        1227.0,
-        0.9001278877258301
-      ],
-      [
-        "red-rock",
-        23.5,
-        1219.0,
-        0.8987922668457031
-      ],
-      [
-        "yellow-rock",
-        214.0,
-        1263.0,
-        0.8955788016319275
-      ],
-      [
-        "yellow-rock",
-        625.0,
-        1238.0,
-        0.8934409618377686
-      ],
-      [
-        "red-rock",
-        532.5,
-        1257.0,
-        0.889096200466156
-      ],
-      [
-        "red-rock",
-        54.5,
-        1230.0,
-        0.8767438530921936
+        687.0,
+        30.0,
+        0.9178684949874878
       ],
       [
         "house",
-        351.0,
-        706.0,
-        0.8750087022781372
-      ],
-      [
-        "yellow-rock",
-        250.0,
-        1265.5,
-        0.6765601634979248
-      ],
-      [
-        "yellow-rock",
-        84.0,
-        1226.5,
-        0.5333191156387329
-      ],
-      [
-        "red-rock",
-        500.5,
-        1262.0,
-        0.4366161525249481
+        387.0,
+        596.5,
+        0.8396806716918945
       ]
     ],
     "near": []
@@ -153,21 +57,21 @@
     "video_timestamp": "N/A"
   },
   "system_status": {
-    "last_score": "No end completed yet",
+    "last_score": "End 6: Red 0 - Yellow 0",
     "fps": 0.0,
     "model": "fcc-curling-rock-detection/17"
   },
   "trajectory_predictions": [
     {
-      "rock_id": 3,
+      "rock_id": 4,
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 1067.4615703917289,
-        "y": 1538.6619260656437,
-        "confidence": 1.0,
-        "time_to_stop": 24.500000000000213,
-        "distance": 769.2321116703623
+        "x": 252.8043131839541,
+        "y": 525.9152813204282,
+        "confidence": 0.46264163249956136,
+        "time_to_stop": 18.250000000000124,
+        "distance": 289.54570434526005
       }
     },
     {
@@ -175,35 +79,23 @@
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 287.6645448344933,
-        "y": 1248.0415066822832,
-        "confidence": 0.13771914142862712,
-        "time_to_stop": 10.20000000000001,
-        "distance": 72.20210576059813
+        "x": 777.5315284642794,
+        "y": -56.59877602371528,
+        "confidence": 0.19123093260331192,
+        "time_to_stop": 12.35000000000004,
+        "distance": 107.89519755911593
       }
     },
     {
-      "rock_id": 7,
+      "rock_id": 10,
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 285.04572704023684,
-        "y": 1250.981347538879,
-        "confidence": 0.14067218332706527,
-        "time_to_stop": 10.350000000000012,
-        "distance": 74.20380168488572
-      }
-    },
-    {
-      "rock_id": 9,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 514.9097396997797,
-        "y": 1278.7515385939844,
-        "confidence": 0.20360314391011528,
-        "time_to_stop": 12.800000000000047,
-        "distance": 116.2705970771252
+        "x": 740.4784203395592,
+        "y": 127.82404558709678,
+        "confidence": 0.18206737582605098,
+        "time_to_stop": 12.050000000000036,
+        "distance": 101.84544286852527
       }
     },
     {
@@ -211,35 +103,35 @@
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 468.0323381906476,
-        "y": 1307.796943979217,
-        "confidence": 0.249499026088501,
-        "time_to_stop": 14.150000000000066,
-        "distance": 146.96710313453463
+        "x": 345.2648398128476,
+        "y": 691.5045698340962,
+        "confidence": 0.732955473319167,
+        "time_to_stop": 21.35000000000017,
+        "distance": 470.52887481260393
       }
     },
     {
-      "rock_id": 12,
+      "rock_id": 15,
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 194.49697549959055,
-        "y": 1230.4266857506134,
-        "confidence": 0.2744401309858409,
-        "time_to_stop": 14.800000000000075,
-        "distance": 163.70130335020457
+        "x": 386.9440369279936,
+        "y": 90.69858796665403,
+        "confidence": 0.10064496175140945,
+        "time_to_stop": 8.09999999999998,
+        "distance": 47.36557348736019
       }
     },
     {
-      "rock_id": 13,
+      "rock_id": 19,
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 419.327605370722,
-        "y": 871.7142170073097,
-        "confidence": 0.30267244936489074,
-        "time_to_stop": 15.450000000000085,
-        "distance": 182.5851776885038
+        "x": 279.78014103221955,
+        "y": 57.2953709942358,
+        "confidence": 0.1663965917755854,
+        "time_to_stop": 11.450000000000028,
+        "distance": 91.35908292562468
       }
     },
     {
@@ -247,26 +139,38 @@
       "color": "unknown",
       "current_position": null,
       "predicted_stop": {
-        "x": 444.77623673153585,
-        "y": 1257.1194627421603,
-        "confidence": 0.11096055236557152,
-        "time_to_stop": 8.74999999999999,
-        "distance": 54.26694313223906
+        "x": 192.0438987014831,
+        "y": 712.5901269627776,
+        "confidence": 0.5288227000217709,
+        "time_to_stop": 19.150000000000137,
+        "distance": 333.8581012579062
+      }
+    },
+    {
+      "rock_id": 28,
+      "color": "unknown",
+      "current_position": null,
+      "predicted_stop": {
+        "x": 419.4162805295306,
+        "y": -1.7988605841197836,
+        "confidence": 0.3680790409901733,
+        "time_to_stop": 16.750000000000103,
+        "distance": 226.34038839845468
       }
     }
   ],
   "debug_logs": [
-    "Rocks settled (3 moving)",
-    "Throw complete: team_yellow, total 8",
+    "Throw complete: team_yellow, total 15",
     "throw_started",
     "rocks_settling",
-    "Rocks settled (4 moving)",
-    "Throw complete: team_red, total 9",
+    "Rocks settled (1 moving)",
+    "Throw complete: team_red, total 16",
+    "End 6 complete: Red 0 - Yellow 0",
     "throw_started",
     "rocks_settling",
-    "Rocks settled (4 moving)",
-    "Throw complete: team_yellow, total 10"
+    "Rocks settled (0 moving)",
+    "Throw complete: team_yellow, total 1"
   ],
-  "received_at": "2026-04-22 09:59:38",
-  "last_update": 1776880778.2739453
+  "received_at": "2026-04-22 11:36:11",
+  "last_update": 1776886571.2268555
 }
