@@ -150,8 +150,9 @@
     </div>
 
     <script>
-        // API endpoint
-        const API = '/coach_api';
+        // API endpoint - detect environment
+        const isPHP = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        const API = isPHP ? '/curling' : '/coach_api';
 
         // Canvas drawing functions
         function drawSheet(canvas, rocks = []) {
@@ -203,7 +204,8 @@
         // Load games
         async function loadGames() {
             try {
-                const res = await fetch(`${API}/games`);
+                const endpoint = isPHP ? `${API}/games.php` : `${API}/games`;
+                const res = await fetch(endpoint);
                 const games = await res.json();
                 renderGames(games);
             } catch (e) {
@@ -288,7 +290,8 @@
             if (result) params.append('result', result);
 
             try {
-                const res = await fetch(`${API}/shots?${params}`);
+                const endpoint = isPHP ? `${API}/shots.php?${params}` : `${API}/shots?${params}`;
+                const res = await fetch(endpoint);
                 const shots = await res.json();
                 // TODO: Render search results
                 console.log('Found shots:', shots);

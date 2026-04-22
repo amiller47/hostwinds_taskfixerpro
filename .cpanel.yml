@@ -10,6 +10,7 @@ deployment:
     - /bin/cp -f static/*.php $HOME/public_html/curling/
     - /bin/cp -f api/*.php $HOME/public_html/curling/api/
     - /bin/cp -f api/.htaccess $HOME/public_html/curling/api/
+    - /bin/cp -f data/games.db $HOME/public_html/curling/data/ 2>/dev/null || true
     - /bin/chmod 755 $HOME/public_html/curling/data
     - /bin/chmod 644 $HOME/public_html/curling/*.php $HOME/public_html/curling/api/*.php
     - /bin/echo "Deployed $(date)" >> $HOME/public_html/curling/data/deploy.log
