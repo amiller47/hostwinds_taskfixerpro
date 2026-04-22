@@ -35,13 +35,16 @@ if ($data === null) {
 }
 
 // Validate required fields (minimal check)
-$required = ['game_state', 'current_end'];
-foreach ($required as $field) {
-    if (!isset($data[$field])) {
-        http_response_code(400);
-        echo json_encode(['error' => "Missing field: $field"]);
-        exit;
-    }
+// Accept either top-level current_end or nested game_state.end
+if (!isset($data['game_state'])) {
+    http_response_code(400);
+    echo json_encode(['error' => 'Missing field: game_state']);
+    exit;
+}
+
+// If current_end is not at top level, extract from game_state
+if (!isset($data['current_end']) && isset($data['game_state']['end'])) {
+    $data['current_end'] = $data['game_state']['end'];
 }
 
 // Write to data file

@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling Debug Dashboard - FCC Sheet 5</title>
+    <style>
+        /* Navigation */
+        .nav-bar {
+            background: #1a1a1a;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-bar h1 { margin: 0; font-size: 20px; }
+        .nav-select {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            cursor: pointer;
+        }
+        .nav-select:hover { background: #444; }
+
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #0f0;
+        }
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #0f0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .panel {
+            text-align: center;
+            background: #1a1a1a;
+            padding: 15px;
+            border-radius: 10px;
+        }
+        .debug-frame {
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #000;
+            max-width: 360px;
+        }
+        h2 {
+            color: #0f0;
+            margin-bottom: 10px;
+        }
+        .info {
+            font-size: 14px;
+            color: #aaa;
+            margin-top: 10px;
+        }
+        .detections-list {
+            text-align: left;
+            font-family: monospace;
+            font-size: 11px;
+            max-height: 300px;
+            overflow-y: auto;
+            background: #000;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        .det-item { margin: 2px 0; }
+        .det-button { color: #0f0; }
+        .det-house { color: #88f; }
+        .det-red { color: #f66; }
+        .det-yellow { color: #ff0; }
+        .calibration-panel {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+        .calibration-panel h3 { color: #0f0; }
+        .cal-row { margin: 5px 0; font-family: monospace; }
+        .warning { color: #f80; }
+        .success { color: #0f0; }
+        .update-time {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <h1>🔧 Debug Dashboard</h1>
+        <select class="nav-select" onchange="window.location.href=this.value">
+            <option value="index.html">Live Dashboard</option>
+            <option value="debug.html" selected>Debug View</option>
+            <option value="coach.html">Coaching Review</option>
+            <option value="bingo.html">Curling Bingo</option>
+            <option value="shot.html">Shot Calling</option>
+        </select>
+    </div>
+
+    <div class="calibration-panel">
+        <h3>Calibration Status</h3>
+        <div class="cal-row">Button (far): <span id="button-far">--</span> <span id="button-far-status"></span></div>
+        <div class="cal-row">Button (near): <span id="button-near">--</span> <span id="button-near-status"></span></div>
+        <div class="cal-row">House Size: <span id="house-size">--</span></div>
+        <div class="cal-row">Video Resolution: <span id="resolution">--</span></div>
+        <div class="cal-row">Frame Y range: <span id="y-range">--</span></div>
+    </div>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Detections List</h2>
+            <div class="detections-list" id="detections-list">
+                Loading...
+            </div>
+        </div>
+        
+        <div class="panel">
+            <h2>Rock Positions (Y-axis)</h2>
+            <canvas id="y-plot" width="300" height="600"></canvas>
+            <div class="info">
+                Red/Yellow dots = rock Y positions<br>
+                Green line = button Y (house center)<br>
+                Rocks near button Y are in the house
+            </div>
+        </div>
+    </div>
+
+    <div class="update-time" id="update-time">Last update: --</div>
+
+    <script>
+        const canvas = document.getElementById('y-plot');
+        const ctx = canvas.getContext('2d');
+        
+        // Fetch data
+        async function updateDashboard() {
+            try {
+                // Try Flask first, then PHP
+                let data;
+                try {
+                    const flaskResp = await fetch('http://localhost:5000/curling_data.json');
+                    if (flaskResp.ok) {
+                        data = await flaskResp.json();
+                    }
+                } catch (e) {
+                    // Try PHP
+                    const phpResp = await fetch('api/curling_data.php');
+                    data = await phpResp.json();
+                }
+                
+                renderData(data);
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+        
+        function renderData(data) {
+            // Update calibration display
+            const buttonFar = data.locked_button?.far;
+            const buttonNear = data.locked_button?.near;
+            const houseSize = data.locked_house_size?.far;
+            
+            document.getElementById('button-far').textContent = 
+                buttonFar ? `(${buttonFar[0]}, ${buttonFar[1]})` : 'Not set';
+            document.getElementById('button-near').textContent = 
+                buttonNear ? `(${buttonNear[0]}, ${buttonNear[1]})` : 'Not set';
+            document.getElementById('house-size').textContent = 
+                houseSize ? `${houseSize}px` : 'Not set';
+            
+            // Get detections
+            const farDets = data.current_raw_detections?.far || [];
+            const nearDets = data.current_raw_detections?.near || [];
+            const allDets = [...farDets, ...nearDets];
+            
+            // Find button detection
+            const buttonDet = allDets.find(d => d[0]?.toLowerCase() === 'button');
+            
+            if (buttonDet) {
+                const detectedY = buttonDet[2];
+                const calibratedY = buttonFar ? buttonFar[1] : 0;
+                const diff = Math.abs(detectedY - calibratedY);
+                
+                document.getElementById('button-far-status').innerHTML = 
+                    buttonDet ? 
+                    `<span class="${diff < 50 ? 'success' : 'warning'}">Detected: ${detectedY.toFixed(0)} (diff: ${diff.toFixed(0)}px)</span>` : 
+                    '<span class="warning">Not detected</span>';
+            }
+            
+            // Update detections list
+            const detList = document.getElementById('detections-list');
+            let html = '';
+            
+            allDets.forEach(det => {
+                const cls = det[0]?.toLowerCase() || 'unknown';
+                const x = det[1]?.toFixed(0) || 0;
+                const y = det[2]?.toFixed(0) || 0;
+                const conf = (det[3] * 100)?.toFixed(0) || 0;
+                
+                let colorClass = 'det-item';
+                if (cls.includes('button')) colorClass += ' det-button';
+                else if (cls.includes('house')) colorClass += ' det-house';
+                else if (cls.includes('red')) colorClass += ' det-red';
+                else if (cls.includes('yellow')) colorClass += ' det-yellow';
+                
+                html += `<div class="${colorClass}">${cls}: (${x}, ${y}) ${conf}%</div>`;
+            });
+            
+            detList.innerHTML = html || '<div class="det-item">No detections</div>';
+            
+            // Plot Y positions
+            const width = canvas.width;
+            const height = canvas.height;
+            ctx.clearRect(0, 0, width, height);
+            
+            // Background
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+            
+            // Scale: Y coords 0-1280 map to height
+            const scaleY = (y) => (y / 1280) * height;
+            
+            // Draw frame regions
+            ctx.fillStyle = '#222';
+            ctx.fillRect(0, 0, width, scaleY(400)); // Top
+            ctx.fillRect(0, scaleY(900), width, height - scaleY(900)); // Bottom (hack area)
+            
+            // Draw button Y line (if detected)
+            if (buttonDet) {
+                const buttonY = scaleY(buttonDet[2]);
+                ctx.strokeStyle = '#0f0';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(0, buttonY);
+                ctx.lineTo(width, buttonY);
+                ctx.stroke();
+                
+                ctx.fillStyle = '#0f0';
+                ctx.font = '12px Arial';
+                ctx.fillText(`Button Y=${buttonDet[2].toFixed(0)}`, 10, buttonY - 5);
+            }
+            
+            // Draw rock Y positions
+            const rocks = allDets.filter(d => d[0]?.toLowerCase().includes('rock'));
+            rocks.forEach((rock, i) => {
+                const y = scaleY(rock[2]);
+                const x = (i % 10) * 28 + 20;
+                
+                ctx.beginPath();
+                ctx.arc(x, y, 8, 0, Math.PI * 2);
+                ctx.fillStyle = rock[0].includes('red') ? '#f66' : '#ff0';
+                ctx.fill();
+            });
+            
+            // Labels
+            ctx.fillStyle = '#888';
+            ctx.font = '11px Arial';
+            ctx.fillText('Y=0 (top)', 10, 15);
+            ctx.fillText('Y=1280 (bottom)', 10, height - 5);
+            ctx.fillText('Rocks near button line = in house', 10, height / 2);
+            
+            // Update time
+            document.getElementById('update-time').textContent = 
+                `Last update: ${data.last_update ? new Date(data.last_update * 1000).toLocaleTimeString() : 'Unknown'}`;
+        }
+        
+        // Update every 2 seconds
+        updateDashboard();
+        setInterval(updateDashboard, 2000);
+    </script>
+</body>
+</html>

@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Shot Calling</title>
     <style>
+        /* Navigation */
+        .nav-bar {
+            background: #1a1a1a;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-bar h1 { margin: 0; font-size: 20px; color: #0f0; }
+        .nav-select {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            cursor: pointer;
+        }
+        .nav-select:hover { background: #444; }
+
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 { color: #0f0; text-align: center; }
         body {
             background: #111;
             color: #eee;
@@ -77,8 +106,17 @@
     </style>
 </head>
 <body>
+    <div class="nav-bar">
+        <h1>🎯 AI Shot Calling</h1>
+        <select class="nav-select" onchange="window.location.href=this.value">
+            <option value="index.html">Live Dashboard</option>
+            <option value="debug.html">Debug View</option>
+            <option value="coach.html">Coaching Review</option>
+            <option value="bingo.html">Curling Bingo</option>
+            <option value="shot.html" selected>Shot Calling</option>
+        </select>
+    </div>
     <div class="container">
-        <h1>🥌 AI Shot Calling Assistant</h1>
 
         <div class="house-display">
             <div>
