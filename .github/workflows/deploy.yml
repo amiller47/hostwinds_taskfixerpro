@@ -1,0 +1,30 @@
+name: Deploy to Hostwinds
+
+on:
+  push:
+    branches: [ master ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOSTWINDS_HOST }}
+          username: ${{ secrets.HOSTWINDS_USER }}
+          key: ${{ secrets.HOSTWINDS_KEY }}
+          port: ${{ secrets.HOSTWINDS_PORT || 22 }}
+          script: |
+            cd repos/curling_vision
+            git pull origin master
+            # Run deployment commands from .cpanel.yml
+            mkdir -p $HOME/public_html/curling/api
+            mkdir -p $HOME/public_html/curling/js
+            mkdir -p $HOME/public_html/curling/data
+            cp -f static/*.html $HOME/public_html/curling/
+            cp -f api/*.php $HOME/public_html/curling/api/
+            cp -f api/.htaccess $HOME/public_html/curling/api/
+            chmod 755 $HOME/public_html/curling/data
+            echo "Deployed via GitHub Actions: $(date)" >> $HOME/public_html/curling/data/deploy.log
