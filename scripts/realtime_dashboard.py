@@ -110,6 +110,13 @@ def update_dashboard(tracker, detections=None, frame=None):
     with open(DASHBOARD_FILE, "w") as f:
         json.dump(data, f, indent=2)
 
+    # Write bingo events file for PHP endpoint
+    if _bingo_game && hasattr(_bingo_game, 'events_occurred'):
+        occurred_events = list(_bingo_game.events_occurred)
+        bingo_events_file = os.path.join(os.path.dirname(DASHBOARD_FILE), "bingo_events.json")
+        with open(bingo_events_file, "w") as f:
+            json.dump({"events": occurred_events, "count": len(occurred_events)}, f, indent=2)
+
     # Upload to Hostwinds every UPLOAD_INTERVAL seconds
     if time.time() - _last_upload >= UPLOAD_INTERVAL:
         send_to_hostwinds(data)
