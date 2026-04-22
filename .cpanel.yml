@@ -5,6 +5,7 @@ deployment:
     - /bin/mkdir -p $HOME/public_html/curling/api
     - /bin/mkdir -p $HOME/public_html/curling/js  
     - /bin/mkdir -p $HOME/public_html/curling/data
+    - /bin/mkdir -p $HOME/public_html/curling/data/bingo_cards
     - /bin/cp -f static/*.html $HOME/public_html/curling/
     - /bin/cp -f static/*.php $HOME/public_html/curling/
     - /bin/cp -f api/*.php $HOME/public_html/curling/api/

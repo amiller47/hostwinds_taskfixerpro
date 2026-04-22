@@ -157,14 +157,20 @@
         <div id="winner" style="display: none;"></div>
     </div>
 
+    <script src="js/config.js"></script>
     <script>
         let cardId = null;
 
+        // Detect environment and set API base
+        const isPHP = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+        const API_BASE = isPHP ? '' : '';
+
         async function generateCard() {
             try {
-                const res = await fetch('/bingo_api/card');
+                const endpoint = isPHP ? '/curling/bingo_card.php' : '/bingo_api/card';
+                const res = await fetch(endpoint);
                 const card = await res.json();
-                cardId = card.card_id;
+                cardId = card.id;
                 renderCard(card);
             } catch (e) {
                 alert('Error generating card: ' + e);
@@ -179,13 +185,38 @@
             }
             html += '</div><div class="bingo-card">';
 
+            // Handle both PHP and Flask formats
+            const events = card.events_grid || card.events;
+            const marked = card.marked_grid || card.marked;
+            
+            // If PHP format (events as object), convert to grid
+            if (typeof events === 'object' && !Array.isArray(events)) {
+                // PHP format: events["0_0"], events["0_1"], etc.
+                let grid = [];
+                let markGrid = [];
+                for (let row = 0; row < 5; row++) {
+                    let rowArr = [];
+                    let markRow = [];
+                    for (let col = 0; col < 5; col++) {
+                        const cell = events[`${row}_${col}`];
+                        rowArr.push(cell.name || cell.id || 'FREE');
+                        markRow.push(cell.marked || false);
+                    }
+                    grid.push(rowArr);
+                    markGrid.push(markRow);
+                }
+                renderGrid(grid, markGrid, card.id);
+                return;
+            }
+            
+            // Flask format: 2D arrays
             for (let row = 0; row < 5; row++) {
                 for (let col = 0; col < 5; col++) {
-                    const event = card.events[row][col];
-                    const marked = card.marked[row][col];
+                    const event = events[row][col];
+                    const isMarked = marked[row][col];
                     const isFree = event === 'FREE';
 
-                    const cellClass = isFree ? 'free' : (marked ? 'marked' : '');
+                    const cellClass = isFree ? 'free' : (isMarked ? 'marked' : '');
                     const eventName = isFree ? 'FREE' : event;
 
                     html += `<div class="bingo-cell ${cellClass}" onclick="markCell(${row}, ${col})">`;
@@ -195,7 +226,35 @@
             }
 
             html += '</div>';
-            html += `<p>Card ID: ${card.card_id}</p>`;
+            html += `<p>Card ID: ${card.id || card.card_id}</p>`;
+            container.innerHTML = html;
+        }
+        
+        function renderGrid(events, marked, id) {
+            const container = document.getElementById('card-container');
+            let html = '<div class="header">';
+            for (const letter of 'BINGO') {
+                html += `<div class="header-cell">${letter}</div>`;
+            }
+            html += '</div><div class="bingo-card">';
+            
+            for (let row = 0; row < 5; row++) {
+                for (let col = 0; col < 5; col++) {
+                    const event = events[row][col];
+                    const isMarked = marked[row][col];
+                    const isFree = event === 'FREE';
+
+                    const cellClass = isFree ? 'free' : (isMarked ? 'marked' : '');
+                    const eventName = isFree ? 'FREE' : event;
+
+                    html += `<div class="bingo-cell ${cellClass}" onclick="markCell(${row}, ${col})">`;
+                    html += eventName.replace(/_/g, ' ');
+                    html += '</div>';
+                }
+            }
+
+            html += '</div>';
+            html += `<p>Card ID: ${id}</p>`;
             container.innerHTML = html;
         }
 
@@ -206,12 +265,11 @@
             }
 
             try {
-                // In a real implementation, this would call the server
-                // For now, just toggle locally
-                const res = await fetch(`/bingo_api/card/${cardId}`);
+                const endpoint = isPHP ? `/curling/bingo_card.php?id=${cardId}` : `/bingo_api/card/${cardId}`;
+                const res = await fetch(endpoint);
                 const status = await res.json();
 
-                if (status.has_bingo) {
+                if (status.has_bingo || status.bingo) {
                     showWinner();
                 }
             } catch (e) {
@@ -223,20 +281,22 @@
             if (!cardId) return;
 
             try {
-                const res = await fetch(`/bingo_api/card/${cardId}`);
+                const cardEndpoint = isPHP ? `/curling/bingo_card.php?id=${cardId}` : `/bingo_api/card/${cardId}`;
+                const res = await fetch(cardEndpoint);
                 const status = await res.json();
-                renderCard({card_id: cardId, events: status.events, marked: status.marked});
+                renderCard(status);
 
-                if (status.has_bingo) {
+                if (status.has_bingo || status.bingo) {
                     showWinner();
                 }
 
                 // Update events list
-                const eventsRes = await fetch('/bingo_api/occurred');
+                const eventsEndpoint = isPHP ? '/curling/bingo_occurred.php' : '/bingo_api/occurred';
+                const eventsRes = await fetch(eventsEndpoint);
                 const events = await eventsRes.json();
-                document.getElementById('events-count').textContent = events.length;
+                document.getElementById('events-count').textContent = events.length || 0;
                 document.getElementById('events-list').innerHTML =
-                    events.map(e => `<span class="event">${e}</span>`).join('');
+                    (events.events || events).map(e => `<span class="event">${e}</span>`).join('');
             } catch (e) {
                 console.error('Error refreshing:', e);
             }
