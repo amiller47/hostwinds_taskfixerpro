@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit;
 }
 
-// Bingo events for curling
+// Bingo events for curling (need 24 minimum)
 $BINGO_EVENTS = [
     'draw_to_button' => 'Draw to the button',
     'takeout' => 'Takeout',
@@ -40,7 +40,11 @@ $BINGO_EVENTS = [
     'center_guard' => 'Center guard',
     'corner_guard' => 'Corner guard',
     'in_house' => 'Rock in house',
-    'biting_12' => 'Biting 12 oclock'
+    'biting_12' => 'Biting 12 oclock',
+    'hack_weight' => 'Hack weight takeout',
+    'tick' => 'Tick shot',
+    'runback' => 'Runback takeout',
+    'promote_takeout' => 'Promote takeout'
 ];
 
 function generateBingoCard() {

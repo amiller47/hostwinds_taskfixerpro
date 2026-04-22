@@ -280,8 +280,13 @@
             };
 
             try {
+                // Detect environment
+                const isPHP = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+                const suggestUrl = isPHP ? '/curling/shot_suggest.php' : '/shot_api/suggest';
+                const analyzeUrl = isPHP ? '/curling/shot_analyze.php' : '/shot_api/analyze';
+                
                 // Get suggestion
-                const suggestRes = await fetch('/shot_api/suggest', {
+                const suggestRes = await fetch(suggestUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(data)
@@ -289,7 +294,7 @@
                 const suggestion = await suggestRes.json();
 
                 // Get analysis
-                const analyzeRes = await fetch('/shot_api/analyze', {
+                const analyzeRes = await fetch(analyzeUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ rocks: rocks })
