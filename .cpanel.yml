@@ -1,36 +1,12 @@
 ---
-# cPanel deployment configuration
-# Deploys curling dashboard to public_html/curling/
-#
-# Setup in cPanel:
-# 1. Go to Git Version Control
-# 2. Clone this repo: https://github.com/amiller47/hostwinds_taskfixerpro
-# 3. Set repository path (e.g., ~/repos/curling_vision)
-# 4. Click "Pull or Deploy" → "Deploy HEAD Commit"
-#
-# Variables (provided by cPanel):
-#   $HOME - Your home directory
-#   $REPO_PATH - Path to the cloned repository
-
+# cPanel deployment - copy static files to public_html/curling/
 deployment:
   tasks:
-    # Create directories if needed
     - /bin/mkdir -p $HOME/public_html/curling/api
-    - /bin/mkdir -p $HOME/public_html/curling/js
+    - /bin/mkdir -p $HOME/public_html/curling/js  
     - /bin/mkdir -p $HOME/public_html/curling/data
-    
-    # Copy static HTML files
-    - /bin/cp -f $REPO_PATH/static/*.html $HOME/public_html/curling/
-    
-    # Copy JavaScript (if exists)
-    - if [ -d \"$REPO_PATH/static/js\" ]; then /bin/cp -f $REPO_PATH/static/js/*.js $HOME/public_html/curling/js/; fi
-    
-    # Copy PHP API endpoints
-    - /bin/cp -f $REPO_PATH/api/*.php $HOME/public_html/curling/api/
-    - /bin/cp -f $REPO_PATH/api/.htaccess $HOME/public_html/curling/api/
-    
-    # Ensure data directory is writable
+    - /bin/cp -f static/*.html $HOME/public_html/curling/
+    - /bin/cp -f api/*.php $HOME/public_html/curling/api/
+    - /bin/cp -f api/.htaccess $HOME/public_html/curling/api/
     - /bin/chmod 755 $HOME/public_html/curling/data
-    
-    # Log deployment
     - /bin/echo "Deployed $(date)" >> $HOME/public_html/curling/data/deploy.log
