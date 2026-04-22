@@ -1,6 +1,6 @@
 <?php
 /**
- * Bingo Card API - Root directory version (PHP actually executes here)
+ * Bingo Card API - Root directory version
  * 
  * Usage:
  *   GET /bingo_card.php         - Generate new card
@@ -40,7 +40,7 @@ $BINGO_EVENTS = [
     'center_guard' => 'Center guard',
     'corner_guard' => 'Corner guard',
     'in_house' => 'Rock in house',
-    'biting_12' => 'Biting 12 o\'clock'
+    'biting_12' => 'Biting 12 oclock'
 ];
 
 function generateBingoCard() {
@@ -60,7 +60,7 @@ function generateBingoCard() {
     $idx = 0;
     for ($row = 0; $row < 5; $row++) {
         for ($col = 0; $col < 5; $col++) {
-            $key = "{$row}_{$col}";
+            $key = $row . '_' . $col;
             if ($row === 2 && $col === 2) {
                 $card['events'][$key] = [
                     'id' => 'free',
@@ -68,12 +68,13 @@ function generateBingoCard() {
                     'marked' => true
                 ];
             } else {
-                $event_id = $selected[$idx++];
+                $event_id = $selected[$idx];
                 $card['events'][$key] = [
                     'id' => $event_id,
                     'name' => $BINGO_EVENTS[$event_id],
                     'marked' => false
                 ];
+                $idx++;
             }
         }
     }
@@ -83,14 +84,14 @@ function generateBingoCard() {
     if (!is_dir($cards_dir)) {
         mkdir($cards_dir, 0755, true);
     }
-    file_put_contents("$cards_dir/{$card['id']}.json", json_encode($card));
+    file_put_contents($cards_dir . '/' . $card['id'] . '.json', json_encode($card));
     
     return $card;
 }
 
 function getBingoCard($card_id) {
     $cards_dir = __DIR__ . '/data/bingo_cards';
-    $file = "$cards_dir/$card_id.json";
+    $file = $cards_dir . '/' . $card_id . '.json';
     
     if (!file_exists($file)) {
         return null;
@@ -120,7 +121,7 @@ function markBingoEvent($card_id, $event_id) {
     
     // Save updated card
     $cards_dir = __DIR__ . '/data/bingo_cards';
-    file_put_contents("$cards_dir/$card_id.json", json_encode($card));
+    file_put_contents($cards_dir . '/' . $card_id . '.json', json_encode($card));
     
     // Check for bingo
     $bingo = checkBingo($card);
@@ -139,7 +140,8 @@ function checkBingo($card) {
     for ($row = 0; $row < 5; $row++) {
         $bingo = true;
         for ($col = 0; $col < 5; $col++) {
-            if (!$events["{$row}_{$col}"]['marked']) {
+            $key = $row . '_' . $col;
+            if (!$events[$key]['marked']) {
                 $bingo = false;
                 break;
             }
@@ -151,7 +153,8 @@ function checkBingo($card) {
     for ($col = 0; $col < 5; $col++) {
         $bingo = true;
         for ($row = 0; $row < 5; $row++) {
-            if (!$events["{$row}_{$col}"]['marked']) {
+            $key = $row . '_' . $col;
+            if (!$events[$key]['marked']) {
                 $bingo = false;
                 break;
             }
@@ -163,8 +166,10 @@ function checkBingo($card) {
     $diag1 = true;
     $diag2 = true;
     for ($i = 0; $i < 5; $i++) {
-        if (!$events["{$i}_{$i}"]['marked']) $diag1 = false;
-        if (!$events["{$i}_" . (4-$i)"]['marked']) $diag2 = false;
+        $key1 = $i . '_' . $i;
+        $key2 = $i . '_' . (4-$i);
+        if (!$events[$key1]['marked']) $diag1 = false;
+        if (!$events[$key2]['marked']) $diag2 = false;
     }
     
     return $diag1 || $diag2;
