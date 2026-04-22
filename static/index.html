@@ -120,6 +120,8 @@
         </select>
     </div>
 
+    <script src="js/config.js"></script>
+
     <div class="container">
         <div class="panel">
             <h2>Far End</h2>
@@ -338,7 +340,10 @@
         }
 
         function updateDashboard() {
-            fetch('/curling_data.json?t=' + Date.now())
+            // Always load from data/dashboard_data.json (PHP not working on Hostwinds)
+            const dataUrl = '/curling/data/dashboard_data.json?t=' + Date.now();
+            
+            fetch(dataUrl)
                 .then(res => res.json())
                 .then(data => {
                     const gs = data.game_state || {};
