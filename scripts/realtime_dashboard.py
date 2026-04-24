@@ -162,29 +162,12 @@ def main():
     print("REAL-TIME GAME TRACKING WITH DASHBOARD")
     print("=" * 60)
 
-    # Load calibration
+    # Load calibration (will select correct set after video is opened)
     with open(CALIBRATION_FILE) as f:
         calibration_data = json.load(f)
 
-    # Use RTSP calibration for full videos (720x1280 resolution)
-    # Check video resolution or filename containing 'full'
-    cal_key = "cropped"
-    if "full" in args.video:
-        cal_key = "rtsp"
-    else:
-        # Peek at video resolution
-        test_cap = cv2.VideoCapture(video_source)
-        if test_cap.isOpened():
-            width = int(test_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-            test_cap.release()
-            if width >= 700:  # Full resolution is 720 wide
-                cal_key = "rtsp"
-    
-    calibration = calibration_data.get("calibration_sets", {}).get(cal_key, calibration_data)
-
-    print(f"Calibration: {cal_key}")
-    print(f"Near button: {calibration.get('near', {}).get('button')}")
-    print(f"Far button: {calibration.get('far', {}).get('button')}")
+    print("REAL-TIME GAME TRACKING WITH DASHBOARD")
+    print("=" * 60)
 
     # Enable Hostwinds upload if requested
     global _upload_enabled, _snapshot_enabled
@@ -195,12 +178,8 @@ def main():
     if args.snapshot:
         print(f"Snapshot upload enabled")
 
-    # Wide camera calibration
-    if args.wide and "wide" in calibration:
-        print(f"Wide button: {calibration.get('wide', {}).get('button')}")
-
-    # Initialize tracker
-    tracker = GameTracker(calibration, CONFIG)
+    # Initialize tracker (will update calibration after video is opened)
+    tracker = GameTracker({}, CONFIG)
 
     # Video setup - use flexible source handler
     video_source = TEST_VIDEOS.get(args.video, args.video)
@@ -210,6 +189,19 @@ def main():
     except Exception as e:
         print(f"Error opening video source: {e}")
         return
+
+    # Detect calibration set based on video resolution
+    cal_key = "cropped"
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    if width >= 700:  # Full resolution is 720 wide
+        cal_key = "rtsp"
+    
+    calibration = calibration_data.get("calibration_sets", {}).get(cal_key, calibration_data)
+    tracker.calibration = calibration  # Update tracker with correct calibration
+
+    print(f"Calibration: {cal_key}")
+    print(f"Near button: {calibration.get('near', {}).get('button')}")
+    print(f"Far button: {calibration.get('far', {}).get('button')}")
 
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
