@@ -132,6 +132,11 @@
             <h2>Near End</h2>
             <canvas id="near-sheet" width="400" height="800"></canvas>
         </div>
+        
+        <div class="panel" id="snapshot-panel" style="display: none;">
+            <h2>Live Video</h2>
+            <img id="live-snapshot" width="400" style="border: 2px solid #333;">
+        </div>
     </div>
 
     <div class="info-bar">
@@ -397,8 +402,31 @@
                     
                     document.getElementById('update-time').textContent = 
                         data.received_at || 'Never';
+                    
+                    // Update snapshot if available
+                    updateSnapshot();
                 })
                 .catch(err => console.error('Update failed:', err));
+        }
+        
+        function updateSnapshot() {
+            const snapshotImg = document.getElementById('live-snapshot');
+            const snapshotPanel = document.getElementById('snapshot-panel');
+            
+            // Check if snapshot exists
+            const timestamp = Date.now();
+            const snapshotUrl = `${API_BASE ? API_BASE : '.'}/data/snapshot_0.jpg?t=${timestamp}`;
+            
+            // Try to load snapshot
+            const testImg = new Image();
+            testImg.onload = function() {
+                snapshotImg.src = snapshotUrl;
+                snapshotPanel.style.display = 'block';
+            };
+            testImg.onerror = function() {
+                snapshotPanel.style.display = 'none';
+            };
+            testImg.src = snapshotUrl;
         }
 
         // Initial update

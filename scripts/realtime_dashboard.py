@@ -37,8 +37,10 @@ MODEL_ID = CONFIG["model_id"]
 HOSTWINDS_URL = "https://taskfixerpro.com/curling/simple_update.php"
 # Backup: "https://taskfixerpro.com/curling/api/curling_update.php"
 UPLOAD_INTERVAL = 3.0  # seconds
+SNAPSHOT_INTERVAL = 30  # frames between snapshots
 _last_upload = 0.0
 _upload_enabled = False
+_snapshot_enabled = False
 
 # Bingo game
 _bingo_game = BingoGame()
@@ -92,6 +94,28 @@ def send_to_hostwinds(data):
         print(f"Hostwinds upload error: {e}")
     return False
 
+def upload_snapshot(frame, snapshot_idx=0):
+    """Upload frame snapshot to Hostwinds."""
+    if not _upload_enabled:
+        return False
+    try:
+        # Encode frame as JPEG
+        _, buffer = cv2.imencode('.jpg', frame, [cv2.IMWRITE_JPEG_QUALITY, 85])
+        
+        # Upload via multipart form
+        files = {'snapshot': (f'snapshot_{snapshot_idx}.jpg', buffer.tobytes(), 'image/jpeg')}
+        response = requests.post(
+            "https://taskfixerpro.com/curling/upload_snapshot.php",
+            files=files,
+            timeout=10
+        )
+        if response.status_code == 200:
+            print(f"Snapshot uploaded")
+            return True
+    except Exception as e:
+        print(f"Snapshot upload error: {e}")
+    return False
+
 def update_dashboard(tracker, detections=None, frame=None):
     """Write current state to dashboard file."""
     data = tracker.get_dashboard_data()
@@ -130,6 +154,7 @@ def main():
     parser.add_argument("--start", type=int, default=0, help="Start frame")
     parser.add_argument("--wide", "-w", action="store_true", help="Process both near and wide cameras")
     parser.add_argument("--upload", "-u", action="store_true", help="Upload to Hostwinds dashboard")
+    parser.add_argument("--snapshot", action="store_true", help="Upload frame snapshots to Hostwinds")
     args = parser.parse_args()
     
     print("REAL-TIME GAME TRACKING WITH DASHBOARD")
@@ -148,10 +173,13 @@ def main():
     print(f"Far button: {calibration.get('far', {}).get('button')}")
 
     # Enable Hostwinds upload if requested
-    global _upload_enabled
+    global _upload_enabled, _snapshot_enabled
     _upload_enabled = args.upload
+    _snapshot_enabled = args.snapshot
     if args.upload:
         print(f"Hostwinds upload enabled: {HOSTWINDS_URL}")
+    if args.snapshot:
+        print(f"Snapshot upload enabled")
 
     # Wide camera calibration
     if args.wide and "wide" in calibration:
@@ -264,6 +292,10 @@ def main():
             det_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in detections]
             wide_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in wide_detections] if wide_detections else []
             update_dashboard(tracker, {camera: det_list, "wide": wide_list})
+
+        # Upload snapshot every SNAPSHOT_INTERVAL frames
+        if _snapshot_enabled and processed % SNAPSHOT_INTERVAL == 0 and processed > 0:
+            upload_snapshot(frame, snapshot_idx=0)
 
         last_state = current_state
         processed += 1
