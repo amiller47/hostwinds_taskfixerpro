@@ -421,7 +421,7 @@ class GameTracker:
         self.last_throw_time = 0.0
         
         # Inactivity timeout for end completion (seconds)
-        self.inactivity_timeout = 30.0  # End after 30s of no activity
+        self.inactivity_timeout = 60.0  # End after 60s of no activity (was 30s, too aggressive for video)
         self.last_activity_time = 0.0
 
         # Log
