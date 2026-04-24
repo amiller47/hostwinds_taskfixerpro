@@ -305,16 +305,20 @@ def main():
         if processed % 5 == 0:
             # Filter detections: only keep rocks in the playing area
             # House extends from button +/- house_size/2
-            # For 720x1280 video, button is around Y=600-700, house is ~750px
-            # Valid Y range: roughly button_y - 400 to button_y + 400 (inside house)
-            # Filter out rocks at Y < 200 (scoreboard) or Y > 1100 (hack area)
+            # For 720x1280 video:
+            # - Far camera: house at Y~400-800 (button ~600)
+            # - Near camera: sees both houses
+            #   - Far house at Y~0-400 (rocks land here during odd ends)
+            #   - Near house at Y~900-1280 (rocks land here during even ends)
+            # Valid Y range: 150-1150 (excludes scoreboard at top, hack at bottom)
             def filter_rocks(dets):
                 filtered = []
                 for d in dets:
                     if 'rock' in d['class']:
                         y = d['y']
-                        # Only keep rocks in reasonable Y range (not scoreboard, not hack)
-                        if 200 < y < 1100:
+                        # Keep rocks in reasonable Y range
+                        # Exclude scoreboard (Y<150) and extreme hack area (Y>1150)
+                        if 150 < y < 1150:
                             filtered.append(d)
                     else:
                         filtered.append(d)  # Keep non-rock detections (button, house)
