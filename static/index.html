@@ -261,11 +261,12 @@
                 const dy = detY - button[1];
                 
                 // Transform to canvas coordinates
-                // Far camera: Y increases from thrower (Y=0) toward far end (Y=1280)
-                // Rocks deeper in house have higher Y values
-                // Canvas: house at Y=200, rocks deeper = lower Y on screen = higher canvas Y
+                // Far camera: Y=0 is thrower side, Y increases toward house
+                // Rocks in house have Y near button (~596), rocks beyond have higher Y
+                // Canvas: house at Y=200, rocks beyond house = lower on canvas (higher Y)
+                // INVERT for far: rocks deeper in house = higher Y in video = lower on canvas
                 let rx = centerX + dx * scale;
-                let ry = houseY + dy * scale * (end === 'far' ? 1 : -1);
+                let ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
                 
                 // Clamp to canvas bounds
                 rx = Math.max(20, Math.min(width - 20, rx));
