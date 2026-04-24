@@ -96,7 +96,7 @@ def send_to_hostwinds(data):
 
 def upload_snapshot(frame, snapshot_idx=0):
     """Upload frame snapshot to Hostwinds."""
-    if not _upload_enabled:
+    if not _snapshot_enabled:
         return False
     try:
         # Encode frame as JPEG
@@ -112,6 +112,8 @@ def upload_snapshot(frame, snapshot_idx=0):
         if response.status_code == 200:
             print(f"Snapshot uploaded")
             return True
+        else:
+            print(f"Snapshot upload failed: {response.status_code}")
     except Exception as e:
         print(f"Snapshot upload error: {e}")
     return False
