@@ -166,8 +166,20 @@ def main():
     with open(CALIBRATION_FILE) as f:
         calibration_data = json.load(f)
 
-    # Use RTSP calibration for full videos
-    cal_key = "rtsp" if "full" in args.video else "cropped"
+    # Use RTSP calibration for full videos (720x1280 resolution)
+    # Check video resolution or filename containing 'full'
+    cal_key = "cropped"
+    if "full" in args.video:
+        cal_key = "rtsp"
+    else:
+        # Peek at video resolution
+        test_cap = cv2.VideoCapture(video_source)
+        if test_cap.isOpened():
+            width = int(test_cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            test_cap.release()
+            if width >= 700:  # Full resolution is 720 wide
+                cal_key = "rtsp"
+    
     calibration = calibration_data.get("calibration_sets", {}).get(cal_key, calibration_data)
 
     print(f"Calibration: {cal_key}")
