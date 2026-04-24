@@ -297,7 +297,12 @@ def main():
 
         # Upload snapshot every SNAPSHOT_INTERVAL frames
         if _snapshot_enabled and processed % SNAPSHOT_INTERVAL == 0 and processed > 0:
-            upload_snapshot(frame, snapshot_idx=0)
+            # Use camera name in filename to distinguish near/far
+            cam_idx = 0 if camera == "far" else 1  # far=cam1=0, near=cam2=1
+            upload_snapshot(frame, snapshot_idx=cam_idx)
+            # Also upload with generic name for backward compatibility
+            if cam_idx == 0:
+                upload_snapshot(frame, snapshot_idx=0)
 
         last_state = current_state
         processed += 1

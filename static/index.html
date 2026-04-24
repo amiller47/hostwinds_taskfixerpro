@@ -134,7 +134,7 @@
         </div>
         
         <div class="panel" id="snapshot-panel" style="display: none;">
-            <h2>Live Video</h2>
+            <h2>Live Video <span id="camera-label" style="color: #888;"></span></h2>
             <img id="live-snapshot" width="400" style="border: 2px solid #333;">
         </div>
     </div>
@@ -402,6 +402,19 @@
                     
                     document.getElementById('update-time').textContent = 
                         data.received_at || 'Never';
+                    
+                    // Show which camera should be active based on end
+                    const endNum = gs.end || 1;
+                    const cameraLabel = document.getElementById('camera-label');
+                    if (cameraLabel) {
+                        if (endNum % 2 === 1) {
+                            cameraLabel.textContent = '(Far End - Odd)';
+                            cameraLabel.style.color = '#4CAF50';
+                        } else {
+                            cameraLabel.textContent = '(Near End - Even)';
+                            cameraLabel.style.color = '#2196F3';
+                        }
+                    }
                     
                     // Update snapshot if available
                     updateSnapshot();
