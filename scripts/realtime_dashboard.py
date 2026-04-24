@@ -236,7 +236,7 @@ def main():
         print(f"Starting at frame {args.start}")
 
     # Initialize dashboard
-    update_dashboard(tracker)
+    update_dashboard(tracker, current_camera=None)  # No camera yet
     print(f"Dashboard initialized: {DASHBOARD_FILE}")
     print()
     print("Processing... (Dashboard updates every 5 frames)")
@@ -319,7 +319,7 @@ def main():
         cap_wide.release()
 
     # Final dashboard update
-    update_dashboard(tracker)
+    update_dashboard(tracker, current_camera=camera)
 
     elapsed = time.time() - start_time
     print(f"\nProcessed {processed} frames in {elapsed:.1f}s ({processed/elapsed:.2f} fps)")
