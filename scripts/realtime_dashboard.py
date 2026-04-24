@@ -303,7 +303,25 @@ def main():
 
         # Update dashboard every 5 frames
         if processed % 5 == 0:
-            det_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in detections]
+            # Filter detections: only keep rocks in the playing area
+            # House extends from button +/- house_size/2
+            # For 720x1280 video, button is around Y=600-700, house is ~750px
+            # Valid Y range: roughly button_y - 400 to button_y + 400 (inside house)
+            # Filter out rocks at Y < 200 (scoreboard) or Y > 1100 (hack area)
+            def filter_rocks(dets):
+                filtered = []
+                for d in dets:
+                    if 'rock' in d['class']:
+                        y = d['y']
+                        # Only keep rocks in reasonable Y range (not scoreboard, not hack)
+                        if 200 < y < 1100:
+                            filtered.append(d)
+                    else:
+                        filtered.append(d)  # Keep non-rock detections (button, house)
+                return filtered
+            
+            filtered_detections = filter_rocks(detections)
+            det_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in filtered_detections]
             wide_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in wide_detections] if wide_detections else []
             update_dashboard(tracker, {camera: det_list, "wide": wide_list}, current_camera=camera)
 
