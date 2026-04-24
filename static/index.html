@@ -261,8 +261,11 @@
                 const dy = detY - button[1];
                 
                 // Transform to canvas coordinates
+                // For far end: video Y increases downward (toward thrower)
+                // Canvas Y increases downward (toward bottom of screen)
+                // House is at top of canvas (Y=200), so rocks below button go UP on canvas
                 let rx = centerX + dx * scale;
-                let ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                let ry = houseY + dy * scale * (end === 'far' ? 1 : -1);
                 
                 // Clamp to canvas bounds
                 rx = Math.max(20, Math.min(width - 20, rx));
