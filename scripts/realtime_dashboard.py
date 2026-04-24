@@ -266,8 +266,12 @@ def main():
         # Run inference on main camera
         detections = infer_frame(frame)
 
-        # Determine camera
-        camera = "near" if "near" in args.video else "far"
+        # Determine camera from video filename
+        # cam2 = near, cam1 = far
+        if "cam2" in args.video or "near" in args.video:
+            camera = "near"
+        else:
+            camera = "far"
 
         # Update tracker with main camera
         tracker.process_detections(detections, camera, time.time())
