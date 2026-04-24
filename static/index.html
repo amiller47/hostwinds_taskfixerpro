@@ -415,7 +415,9 @@
             
             // Check if snapshot exists
             const timestamp = Date.now();
-            const snapshotUrl = `${API_BASE ? API_BASE : '.'}/data/snapshot_0.jpg?t=${timestamp}`;
+            // Detect environment - Hostwinds uses /curling/ path, localhost doesn't
+            const isHostwinds = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+            const snapshotUrl = isHostwinds ? `/curling/data/snapshot_0.jpg?t=${timestamp}` : `/data/snapshot_0.jpg?t=${timestamp}`;
             
             // Try to load snapshot
             const testImg = new Image();
