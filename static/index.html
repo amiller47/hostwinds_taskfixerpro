@@ -397,6 +397,21 @@
                     drawSheet(canvases.far, 'far', data);
                     drawSheet(canvases.near, 'near', data);
                     
+                    // Highlight active end based on camera processing
+                    const activeCamera = data.camera; // 'far' or 'near'
+                    const farSheet = document.getElementById('far-sheet');
+                    const nearSheet = document.getElementById('near-sheet');
+                    
+                    if (activeCamera === 'near') {
+                        // Processing near camera - highlight near sheet
+                        nearSheet.style.border = '3px solid #4CAF50';
+                        farSheet.style.border = '1px solid #333';
+                    } else if (activeCamera === 'far') {
+                        // Processing far camera - highlight far sheet
+                        farSheet.style.border = '3px solid #4CAF50';
+                        nearSheet.style.border = '1px solid #333';
+                    }
+                    
                     // Event log
                     const events = data.debug_logs || [];
                     document.getElementById('event-log').innerHTML = events

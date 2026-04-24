@@ -118,9 +118,13 @@ def upload_snapshot(frame, snapshot_idx=0):
         print(f"Snapshot upload error: {e}")
     return False
 
-def update_dashboard(tracker, detections=None, frame=None):
+def update_dashboard(tracker, detections=None, frame=None, current_camera=None):
     """Write current state to dashboard file."""
     data = tracker.get_dashboard_data()
+
+    # Mark which camera is currently active
+    if current_camera:
+        data["camera"] = current_camera
 
     # Persist detections across calls (don't clear other camera)
     # This prevents flickering when one camera updates before the other
@@ -297,11 +301,10 @@ def main():
         if processed % 5 == 0:
             det_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in detections]
             wide_list = [[d["class"], d["x"], d["y"], d["confidence"]] for d in wide_detections] if wide_detections else []
-            update_dashboard(tracker, {camera: det_list, "wide": wide_list})
+            update_dashboard(tracker, {camera: det_list, "wide": wide_list}, current_camera=camera)
 
-        # Upload snapshot every SNAPSHOT_INTERVAL frames
+        # Upload snapshot every SNAPSHOT_INTERVAL frames (sync with dashboard for consistency)
         if _snapshot_enabled and processed % SNAPSHOT_INTERVAL == 0 and processed > 0:
-            # Use camera name in filename to distinguish near/far
             cam_idx = 0 if camera == "far" else 1  # far=cam1=0, near=cam2=1
             upload_snapshot(frame, snapshot_idx=cam_idx)
             # Also upload with generic name for backward compatibility
