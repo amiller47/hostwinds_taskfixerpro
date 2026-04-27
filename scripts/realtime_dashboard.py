@@ -19,6 +19,7 @@ from game_tracker import GameTracker
 from video_source import open_video_source, detect_source_type
 from bingo import BingoGame, BINGO_EVENTS
 from bingo_events import detect_bingo_events
+from universal_calibrate import calibrate_video, load_cached_calibration
 
 # Config
 CONFIG_FILE = "/home/curl/curling_config.json"
@@ -161,6 +162,8 @@ def main():
     parser.add_argument("--wide", "-w", action="store_true", help="Process both near and wide cameras")
     parser.add_argument("--upload", "-u", action="store_true", help="Upload to Hostwinds dashboard")
     parser.add_argument("--snapshot", action="store_true", help="Upload frame snapshots to Hostwinds")
+    parser.add_argument("--auto-calibrate", "-a", action="store_true", help="Auto-calibrate from video (use for new sources)")
+    parser.add_argument("--cal-frames", type=int, default=10, help="Frames for auto-calibration")
     args = parser.parse_args()
     
     print("REAL-TIME GAME TRACKING WITH DASHBOARD")
@@ -194,18 +197,43 @@ def main():
         print(f"Error opening video source: {e}")
         return
 
-    # Detect calibration set based on video resolution
-    cal_key = "cropped"
-    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-    if width >= 700:  # Full resolution is 720 wide
-        cal_key = "rtsp"
+    # Auto-calibration or manual calibration
+    if args.auto_calibrate:
+        print("\n=== AUTO-CALIBRATION ===")
+        auto_cal = calibrate_video(video_source, frames=args.cal_frames, use_cache=True)
+        if auto_cal:
+            # Use auto-calibration
+            cal_key = "auto"
+            calibration = {
+                "auto": {
+                    "button": list(auto_cal.button_position),
+                    "house_size": auto_cal.house_size,
+                    "perspective": auto_cal.perspective,
+                    "quality": auto_cal.quality_score,
+                    "source": video_source
+                }
+            }
+            # Also set the appropriate near/far based on perspective
+            perspective = auto_cal.perspective
+            if perspective in ('near', 'far'):
+                calibration[perspective] = calibration['auto']
+            print(f"Auto-calibrated: {perspective} camera, button {auto_cal.button_position}")
+            print(f"Quality: {auto_cal.quality_score:.0%}")
+        else:
+            print("Auto-calibration failed, falling back to manual")
+            args.auto_calibrate = False
     
-    calibration = calibration_data.get("calibration_sets", {}).get(cal_key, calibration_data)
-    tracker.calibration = calibration  # Update tracker with correct calibration
-
-    print(f"Calibration: {cal_key}")
-    print(f"Near button: {calibration.get('near', {}).get('button')}")
-    print(f"Far button: {calibration.get('far', {}).get('button')}")
+    if not args.auto_calibrate:
+        # Detect calibration set based on video resolution
+        cal_key = "cropped"
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        if width >= 700:  # Full resolution is 720 wide
+            cal_key = "rtsp"
+        
+        calibration = calibration_data.get("calibration_sets", {}).get(cal_key, calibration_data)
+        print(f"Calibration: {cal_key}")
+    
+    tracker.calibration = calibration
 
     fps = cap.get(cv2.CAP_PROP_FPS)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))

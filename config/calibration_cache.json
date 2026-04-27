@@ -1,7 +1,7 @@
 {
   "cache_version": 1,
   "entries": {
-    "/home/curl/Videos/curling/cam1_20260330_194005.mp4": {
+    "/home/curl/Videos/curling/cam2_20260330_194005.mp4": {
       "calibration": {
         "source": "file",
         "source_type": "file",
@@ -10,35 +10,37 @@
           1280
         ],
         "button_position": [
-          362.0,
-          596.5
+          349.5,
+          698.0
         ],
         "button_confidence": 1.0,
-        "button_samples": 5,
+        "button_samples": 10,
         "house_size": 540.0,
         "house_center": [
-          369.0,
-          597.3
+          351.0,
+          708.35
         ],
-        "house_samples": 5,
-        "team_colors": [],
-        "team_color_counts": {},
-        "perspective": "far",
-        "perspective_confidence": 0.7,
+        "house_samples": 10,
+        "team_colors": [
+          "yellow-rock",
+          "red-rock"
+        ],
+        "team_color_counts": {
+          "yellow-rock": 82,
+          "red-rock": 73
+        },
+        "perspective": "near",
+        "perspective_confidence": 0.85,
         "score_radius": 243.0,
-        "frames_analyzed": 5,
-        "frames_with_detections": 5,
-        "calibration_time_ms": 7620.630502700806,
+        "frames_analyzed": 10,
+        "frames_with_detections": 10,
+        "calibration_time_ms": 9216.450452804565,
         "model_id": "fcc-curling-rock-detection/17",
-        "quality_score": 0.7,
-        "warnings": [
-          "Low button detections (5)",
-          "No team colors detected"
-        ]
+        "quality_score": 1.0,
+        "warnings": []
       },
-      "timestamp": 1777251750.7162719,
-      "source": "/home/curl/Videos/curling/cam1_20260330_194005.mp4"
+      "timestamp": 1777252004.5089693,
+      "source": "/home/curl/Videos/curling/cam2_20260330_194005.mp4"
     }
-  },
-  "notes": "Auto-generated calibration cache. Keys are video source identifiers (file path, URL hash, or RTSP address). Entries include calibration data and timestamp."
+  }
 }
