@@ -542,12 +542,85 @@ class UniversalCalibrator:
         }
 
 
+CALIBRATION_CACHE_FILE = os.path.join(os.path.dirname(__file__), '..', 'config', 'calibration_cache.json')
+
+def load_cached_calibration(source: str) -> Optional[UniversalCalibration]:
+    """Load calibration from cache if available."""
+    if not os.path.exists(CALIBRATION_CACHE_FILE):
+        return None
+    
+    try:
+        with open(CALIBRATION_CACHE_FILE) as f:
+            cache = json.load(f)
+        
+        # Create source key (hash long URLs)
+        source_key = source
+        if len(source) > 100:
+            import hashlib
+            source_key = hashlib.md5(source.encode()).hexdigest()
+        
+        if source_key in cache.get('entries', {}):
+            entry = cache['entries'][source_key]
+            return UniversalCalibration.from_dict(entry['calibration'])
+    except Exception as e:
+        print(f"Cache load error: {e}")
+    
+    return None
+
+
+def save_calibration_to_cache(source: str, calibration: UniversalCalibration):
+    """Save calibration to cache for reuse."""
+    import time
+    
+    try:
+        # Load existing cache
+        if os.path.exists(CALIBRATION_CACHE_FILE):
+            with open(CALIBRATION_CACHE_FILE) as f:
+                cache = json.load(f)
+        else:
+            cache = {'cache_version': 1, 'entries': {}}
+        
+        # Create source key
+        source_key = source
+        if len(source) > 100:
+            import hashlib
+            source_key = hashlib.md5(source.encode()).hexdigest()
+        
+        # Add entry
+        cache['entries'][source_key] = {
+            'calibration': calibration.to_dict(),
+            'timestamp': time.time(),
+            'source': source[:100]  # Truncate for readability
+        }
+        
+        # Save cache
+        with open(CALIBRATION_CACHE_FILE, 'w') as f:
+            json.dump(cache, f, indent=2)
+        
+        print(f"Calibration cached for {source_key[:50]}...")
+    except Exception as e:
+        print(f"Cache save error: {e}")
+
+
 def calibrate_video(source: str, frames: int = 50, skip: int = 10,
-                    verbose: bool = True, save_path: Optional[str] = None) -> UniversalCalibration:
-    """Convenience function to calibrate a video."""
+                    verbose: bool = True, use_cache: bool = True) -> UniversalCalibration:
+    """Convenience function to calibrate a video with caching."""
+    # Check cache first
+    if use_cache:
+        cached = load_cached_calibration(source)
+        if cached:
+            if verbose:
+                print(f"Using cached calibration (quality: {cached.quality_score:.0%})")
+            return cached
+    
     calibrator = UniversalCalibrator()
-    return calibrator.analyze_video(source, frames=frames, skip=skip, 
-                                    verbose=verbose, save_path=save_path)
+    result = calibrator.analyze_video(source, frames=frames, skip=skip, verbose=verbose)
+    
+    # Cache the result
+    if use_cache and result:
+        save_calibration_to_cache(source, result)
+    
+    return result
 
 
 if __name__ == "__main__":

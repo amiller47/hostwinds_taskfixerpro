@@ -1,0 +1,44 @@
+{
+  "cache_version": 1,
+  "entries": {
+    "/home/curl/Videos/curling/cam1_20260330_194005.mp4": {
+      "calibration": {
+        "source": "file",
+        "source_type": "file",
+        "resolution": [
+          720,
+          1280
+        ],
+        "button_position": [
+          362.0,
+          596.5
+        ],
+        "button_confidence": 1.0,
+        "button_samples": 5,
+        "house_size": 540.0,
+        "house_center": [
+          369.0,
+          597.3
+        ],
+        "house_samples": 5,
+        "team_colors": [],
+        "team_color_counts": {},
+        "perspective": "far",
+        "perspective_confidence": 0.7,
+        "score_radius": 243.0,
+        "frames_analyzed": 5,
+        "frames_with_detections": 5,
+        "calibration_time_ms": 7620.630502700806,
+        "model_id": "fcc-curling-rock-detection/17",
+        "quality_score": 0.7,
+        "warnings": [
+          "Low button detections (5)",
+          "No team colors detected"
+        ]
+      },
+      "timestamp": 1777251750.7162719,
+      "source": "/home/curl/Videos/curling/cam1_20260330_194005.mp4"
+    }
+  },
+  "notes": "Auto-generated calibration cache. Keys are video source identifiers (file path, URL hash, or RTSP address). Entries include calibration data and timestamp."
+}
