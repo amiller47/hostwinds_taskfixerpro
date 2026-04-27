@@ -22,8 +22,23 @@ def get_youtube_stream_url(url: str, quality: str = "best") -> Optional[str]:
         Direct stream URL or None if failed
     """
     try:
+        # Try multiple yt-dlp locations
+        ytdlp_paths = ['yt-dlp', '/home/curl/timer_env/bin/yt-dlp']
+        ytdlp = None
+        for path in ytdlp_paths:
+            try:
+                subprocess.run([path, '--version'], capture_output=True, timeout=5)
+                ytdlp = path
+                break
+            except:
+                continue
+        
+        if not ytdlp:
+            print("yt-dlp not found")
+            return None
+        
         cmd = [
-            'yt-dlp',
+            ytdlp,
             '--get-url',
             '--format', f'best[ext=mp4]' if quality == 'best' else quality,
             '--no-playlist',
@@ -45,7 +60,21 @@ def get_stream_info(url: str) -> dict:
     Returns dict with: title, duration, resolution, etc.
     """
     try:
-        cmd = ['yt-dlp', '--dump-json', '--no-playlist', url]
+        # Try multiple yt-dlp locations
+        ytdlp_paths = ['yt-dlp', '/home/curl/timer_env/bin/yt-dlp']
+        ytdlp = None
+        for path in ytdlp_paths:
+            try:
+                subprocess.run([path, '--version'], capture_output=True, timeout=5)
+                ytdlp = path
+                break
+            except:
+                continue
+        
+        if not ytdlp:
+            return {}
+        
+        cmd = [ytdlp, '--dump-json', '--no-playlist', url]
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
         if result.returncode == 0:
             return json.loads(result.stdout)
