@@ -385,6 +385,13 @@ class GameTracker:
         self.throws = {"team_red": 0, "team_yellow": 0}
         self.total_throws = 0
         
+        # End-based camera selection
+        # Odd ends (1,3,5...) throw to FAR end, Even ends (2,4,6...) throw to NEAR end
+        self.end_camera_map = {
+            "far": [1, 3, 5, 7, 9, 11],   # Far camera active for odd ends
+            "near": [2, 4, 6, 8, 10, 12]  # Near camera active for even ends
+        }
+        
         # Shot tracking for classification
         self.rock_state_before_throw: List[RockState] = []
         self.last_shot_type: Optional[str] = None
@@ -439,6 +446,21 @@ class GameTracker:
     def _get_active_tracker(self, camera: str) -> RockTracker:
         """Get the appropriate rock tracker for the camera."""
         return self.near_tracker if camera == "near" else self.far_tracker
+    
+    def get_active_camera_for_end(self) -> str:
+        """
+        Get which camera should be active for the current end.
+        
+        In curling:
+        - Odd ends (1,3,5...): Teams throw to FAR end → far camera
+        - Even ends (2,4,6...): Teams throw to NEAR end → near camera
+        
+        Returns: 'far' or 'near'
+        """
+        if self.current_end % 2 == 1:  # Odd end
+            return "far"
+        else:  # Even end
+            return "near"
 
     def _calculate_distance_from_button(self, rock: Rock, camera: str) -> float:
         """Calculate distance from button in pixels."""
@@ -758,6 +780,7 @@ class GameTracker:
         return {
             "state": self.state.value,
             "end": self.current_end,
+            "active_camera": self.get_active_camera_for_end(),
             "hammer": self.hammer,
             "possession": self.possession,
             "scores": self.scores,
