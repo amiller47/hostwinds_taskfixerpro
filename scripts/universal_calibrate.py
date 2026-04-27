@@ -226,7 +226,8 @@ class UniversalCalibrator:
         
         # Classify perspective
         perspective, persp_conf = self._classify_perspective(
-            resolution, button_pos, house_size, frame_count, frames_with_detections
+            resolution, button_pos, house_size, frame_count, frames_with_detections,
+            team_color_counts
         )
         
         # Calculate scoring radius (distance from button for scoring)
@@ -353,7 +354,8 @@ class UniversalCalibrator:
                                button_pos: Tuple[float, float],
                                house_size: float,
                                frames_with_dets: int,
-                               total_frames: int) -> Tuple[str, float]:
+                               total_frames: int,
+                               team_color_counts: Dict[str, int] = None) -> Tuple[str, float]:
         """
         Classify camera perspective from resolution and detections.
         
@@ -366,14 +368,29 @@ class UniversalCalibrator:
         
         # Portrait orientation (height > width) = near or far camera
         if height > width:
-            # Near camera: button closer to bottom
-            # Far camera: button more centered
+            # Both near and far cameras have button in middle
+            # Need to distinguish by:
+            # 1. Team color detection (near camera sees more rocks)
+            # 2. Button position precision
+            
             btn_x_ratio = button_pos[0] / width if button_pos[0] > 0 else 0.5
             btn_y_ratio = button_pos[1] / height if button_pos[1] > 0 else 0.5
             
-            if btn_y_ratio > 0.6:
-                # Button in lower third = near camera (looking down at near house)
-                return ('near', 0.8 if det_rate > 0.5 else 0.5)
+            # Count total rock detections
+            total_rocks = 0
+            if team_color_counts:
+                total_rocks = sum(team_color_counts.values())
+            
+            # Near camera typically sees MORE rocks (close to play)
+            # Far camera sees fewer rocks (distant view)
+            # Threshold: near camera has >50 rock detections in 10 frames
+            if total_rocks > 50:
+                return ('near', 0.85 if det_rate > 0.5 else 0.6)
+            
+            # Button position hint (less reliable)
+            if btn_y_ratio > 0.55:
+                # Button lower than center = near camera looking at far house
+                return ('near', 0.6)
             elif btn_y_ratio > 0.3:
                 # Button in middle = far camera
                 return ('far', 0.7 if det_rate > 0.5 else 0.4)
