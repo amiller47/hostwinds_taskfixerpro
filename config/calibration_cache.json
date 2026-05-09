@@ -41,6 +41,43 @@
       },
       "timestamp": 1777252004.5089693,
       "source": "/home/curl/Videos/curling/cam2_20260330_194005.mp4"
+    },
+    "/home/curl/Videos/curling/cam1_20260330_194005.mp4": {
+      "calibration": {
+        "source": "file",
+        "source_type": "file",
+        "resolution": [
+          720,
+          1280
+        ],
+        "button_position": [
+          361.6551724137931,
+          596.4310344827586
+        ],
+        "button_confidence": 0.9959626882991381,
+        "button_samples": 29,
+        "house_size": 540.0,
+        "house_center": [
+          369.0,
+          597.1724137931035
+        ],
+        "house_samples": 29,
+        "team_colors": [],
+        "team_color_counts": {},
+        "perspective": "far",
+        "perspective_confidence": 0.7,
+        "score_radius": 243.0,
+        "frames_analyzed": 30,
+        "frames_with_detections": 29,
+        "calibration_time_ms": 50709.720849990845,
+        "model_id": "fcc-curling-rock-detection/17",
+        "quality_score": 0.775,
+        "warnings": [
+          "No team colors detected"
+        ]
+      },
+      "timestamp": 1778299602.633401,
+      "source": "/home/curl/Videos/curling/cam1_20260330_194005.mp4"
     }
   }
 }
