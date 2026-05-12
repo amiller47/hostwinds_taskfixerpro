@@ -265,8 +265,9 @@
             const scale = 180.0 / (houseSize / 2);
             
             // Infer boundaries from calibration
-            // Near camera: hog line at TOP (Y=0), back line below house
-            // Far camera: back line at TOP, hog line at BOTTOM (Y=height)
+            // Back line is the EDGE of the house
+            // Near camera: hog line at TOP (Y=0), back line at bottom of house
+            // Far camera: back line at top of house, hog line at BOTTOM
             const houseRadiusPx = houseSize / 2;
             const rockWidth = 40; // approximate rock diameter in pixels
             
@@ -275,23 +276,19 @@
             const frameWidth = 720;
             
             // Calculate boundaries
-            // Back line is approximately house_radius beyond the button
-            // Near camera: back line BELOW house (higher Y)
-            // Far camera: back line ABOVE house (lower Y)
-            let backLineY, hogLineY;
+            // Back line = edge of house (house_radius from button)
+            let backLineY;
             let leftBound, rightBound;
             
             if (end === 'near') {
-                // Near camera: hog at top, back line below
-                hogLineY = 100; // Near top of frame
-                backLineY = button[1] + houseRadiusPx + rockWidth;
+                // Near camera: back line BELOW house (higher Y)
+                backLineY = button[1] + houseRadiusPx;
             } else {
-                // Far camera: back line above, hog at bottom
-                backLineY = button[1] - houseRadiusPx - rockWidth;
-                hogLineY = frameHeight - 100; // Near bottom
+                // Far camera: back line ABOVE house (lower Y)
+                backLineY = button[1] - houseRadiusPx;
             }
             
-            // Side boundaries: house radius + buffer
+            // Side boundaries: house radius + buffer for rocks near edge
             leftBound = button[0] - houseRadiusPx - rockWidth;
             rightBound = button[0] + houseRadiusPx + rockWidth;
 
