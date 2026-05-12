@@ -321,12 +321,28 @@
                 const dy = detY - button[1];
                 
                 // Transform to canvas coordinates
-                // Far camera: Y=0 is thrower side, Y increases toward house
-                // Rocks in house have Y near button (~596), rocks beyond have higher Y
-                // Canvas: house at Y=200, rocks beyond house = lower on canvas (higher Y)
-                // INVERT for far: rocks deeper in house = higher Y in video = lower on canvas
+                //
+                // NEAR CAMERA:
+                // - Top of frame (Y=0) = hog line side
+                // - Bottom of frame (Y=1280) = back line side
+                // - House in lower portion of frame
+                // - Rocks with Y > button_y are closer to back line
+                // - Canvas: house at bottom (Y=600), higher Y in video = higher Y on canvas
+                //
+                // FAR CAMERA:
+                // - Top of frame (Y=0) = back line side
+                // - Bottom of frame (Y=1280) = hog line side  
+                // - House in upper portion of frame
+                // - Rocks with Y > button_y are closer to hog line (opposite of near!)
+                // - Canvas: house at top (Y=200), higher Y in video = higher Y on canvas (SAME direction)
+                //
+                // Both cameras: dy > 0 means rock is below button in video frame
+                // - Near: below button = toward back line = should plot lower on canvas (higher Y)
+                // - Far: below button = toward hog line = should plot lower on canvas (higher Y)
+                //
+                // So NO flip needed - same formula for both!
                 let rx = centerX + dx * scale;
-                let ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                let ry = houseY + dy * scale;
                 
                 // Clamp to canvas bounds
                 rx = Math.max(20, Math.min(width - 20, rx));
@@ -358,13 +374,13 @@
                 // Get rock color
                 const rockColor = pred.color === 'red' ? '#cc0000' : '#ccaa00';
                 
-                // Current position in canvas coords
+                // Current position in canvas coords (same formula for both cameras)
                 const curX = pred.current_position[0];
                 const curY = pred.current_position[1];
                 const dx = curX - button[0];
                 const dy = curY - button[1];
                 let startRx = centerX + dx * scale;
-                let startRy = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                let startRy = houseY + dy * scale;
                 
                 // Predicted stop position in canvas coords
                 const stopX = pred.predicted_stop.x;
@@ -372,7 +388,7 @@
                 const stopDx = stopX - button[0];
                 const stopDy = stopY - button[1];
                 let stopRx = centerX + stopDx * scale;
-                let stopRy = houseY + stopDy * scale * (end === 'far' ? -1 : 1);
+                let stopRy = houseY + stopDy * scale;
                 
                 // Clamp to bounds
                 startRx = Math.max(20, Math.min(width - 20, startRx));
