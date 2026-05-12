@@ -1,18 +1,18 @@
 {
   "game_state": {
-    "possession": "team_yellow",
+    "possession": "team_red",
     "next_shooter": null,
     "score": {
       "team_red": 0,
       "team_yellow": 0
     },
     "end": 1,
-    "state": "rock_in_flight",
+    "state": "rocks_settling",
     "throws": {
-      "team_red": 2,
-      "team_yellow": 1
+      "team_red": 0,
+      "team_yellow": 0
     },
-    "total_throws": 3
+    "total_throws": 0
   },
   "locked_button": {
     "near": [
@@ -25,7 +25,7 @@
     ]
   },
   "locked_house_size": {
-    "near": 540.0,
+    "near": 611.0,
     "far": 748.7
   },
   "current_raw_detections": {
@@ -35,91 +35,97 @@
         "yellow-rock",
         376.5,
         299.5,
-        0.9579402804374695
+        0.9577903747558594
       ],
       [
         "yellow-rock",
-        360.5,
+        361.0,
         989.0,
-        0.9575818181037903
+        0.9560441970825195
       ],
       [
         "yellow-rock",
         260.0,
         303.5,
-        0.9483454823493958
+        0.9470032453536987
       ],
       [
         "red-rock",
         228.5,
         81.0,
-        0.9421268105506897
+        0.9414128661155701
       ],
       [
         "yellow-rock",
         390.0,
         379.5,
-        0.9402145743370056
+        0.9395339488983154
       ],
       [
         "red-rock",
         347.0,
         350.5,
-        0.935265302658081
+        0.9346699714660645
       ],
       [
         "Button",
-        348.5,
+        349.0,
         697.5,
-        0.9280189871788025
+        0.9290559887886047
       ],
       [
         "red-rock",
         613.5,
-        1179.0,
-        0.9267058968544006
+        1179.5,
+        0.9264761805534363
       ],
       [
         "red-rock",
-        583.5,
-        1212.0,
-        0.9087823033332825
+        583.0,
+        1211.5,
+        0.9085004329681396
       ],
       [
         "red-rock",
         575.5,
-        1250.0,
-        0.9075810313224792
-      ],
-      [
-        "yellow-rock",
-        76.0,
-        1209.5,
-        0.9049736857414246
+        1249.5,
+        0.9082715511322021
       ],
       [
         "red-rock",
-        29.5,
+        30.0,
         1176.5,
-        0.901702880859375
+        0.9070338010787964
       ],
       [
         "yellow-rock",
         631.5,
         1218.0,
-        0.8966079354286194
+        0.8952709436416626
+      ],
+      [
+        "red-rock",
+        34.5,
+        1197.5,
+        0.8940570950508118
+      ],
+      [
+        "yellow-rock",
+        75.0,
+        1211.0,
+        0.8675667643547058
       ],
       [
         "house",
         351.0,
-        707.5,
-        0.8252052068710327
+        706.5,
+        0.8584648966789246
       ],
       [
         "yellow-rock",
-        77.5,
-        1233.5,
-        0.7146198749542236
+        643.0,
+        1227.5,
+        0.47128599882125854
       ]
     ]
   },
@@ -135,18 +141,10 @@
   },
   "trajectory_predictions": [],
   "debug_logs": [
-    "Throw complete: team_red, total 1",
     "throw_started",
-    "rocks_settling",
-    "Rocks settled (3 moving)",
-    "Throw complete: team_yellow, total 2",
-    "throw_started",
-    "rocks_settling",
-    "Rocks settled (3 moving)",
-    "Throw complete: team_red, total 3",
-    "throw_started"
+    "rocks_settling"
   ],
-  "received_at": "2026-05-12 10:58:16",
-  "last_update": 1778612296.412396,
+  "received_at": "2026-05-12 11:26:53",
+  "last_update": 1778614013.570979,
   "camera": "near"
 }
