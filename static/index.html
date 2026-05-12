@@ -137,6 +137,20 @@
             <h2>Live Video <span id="camera-label" style="color: #888;"></span></h2>
             <img id="live-snapshot" width="400" style="border: 2px solid #333;">
         </div>
+        
+        <!-- Debug: Show both camera feeds -->
+        <div class="container" style="margin-top: 20px;">
+            <div class="panel">
+                <h3 style="color: #4CAF50;">Far Camera Feed</h3>
+                <img id="far-snapshot" width="400" style="border: 2px solid #333; display: none;">
+                <div id="far-snapshot-status" style="color: #888;">No far camera data</div>
+            </div>
+            <div class="panel">
+                <h3 style="color: #2196F3;">Near Camera Feed</h3>
+                <img id="near-snapshot" width="400" style="border: 2px solid #333; display: none;">
+                <div id="near-snapshot-status" style="color: #888;">No near camera data</div>
+            </div>
+        </div>
     </div>
 
     <div class="info-bar">
@@ -442,25 +456,56 @@
         }
         
         function updateSnapshot() {
-            const snapshotImg = document.getElementById('live-snapshot');
-            const snapshotPanel = document.getElementById('snapshot-panel');
-            
-            // Check if snapshot exists
+            // Update both camera snapshots
             const timestamp = Date.now();
-            // Detect environment - Hostwinds uses /curling/ path, localhost doesn't
             const isHostwinds = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
-            const snapshotUrl = isHostwinds ? `/curling/data/snapshot_0.jpg?t=${timestamp}` : `/data/snapshot_0.jpg?t=${timestamp}`;
+            const basePath = isHostwinds ? '/curling/data/' : '/data/';
             
-            // Try to load snapshot
-            const testImg = new Image();
-            testImg.onload = function() {
-                snapshotImg.src = snapshotUrl;
-                snapshotPanel.style.display = 'block';
+            // Far camera snapshot (snapshot_0.jpg for cam1/far)
+            const farImg = document.getElementById('far-snapshot');
+            const farStatus = document.getElementById('far-snapshot-status');
+            const farUrl = basePath + 'snapshot_0.jpg?t=' + timestamp;
+            
+            const farTest = new Image();
+            farTest.onload = function() {
+                farImg.src = farUrl;
+                farImg.style.display = 'block';
+                farStatus.style.display = 'none';
             };
-            testImg.onerror = function() {
-                snapshotPanel.style.display = 'none';
+            farTest.onerror = function() {
+                farImg.style.display = 'none';
+                farStatus.style.display = 'block';
+                farStatus.textContent = 'No far camera data';
             };
-            testImg.src = snapshotUrl;
+            farTest.src = farUrl;
+            
+            // Near camera snapshot (snapshot_1.jpg for cam2/near)
+            const nearImg = document.getElementById('near-snapshot');
+            const nearStatus = document.getElementById('near-snapshot-status');
+            const nearUrl = basePath + 'snapshot_1.jpg?t=' + timestamp;
+            
+            const nearTest = new Image();
+            nearTest.onload = function() {
+                nearImg.src = nearUrl;
+                nearImg.style.display = 'block';
+                nearStatus.style.display = 'none';
+            };
+            nearTest.onerror = function() {
+                nearImg.style.display = 'none';
+                nearStatus.style.display = 'block';
+                nearStatus.textContent = 'No near camera data';
+            };
+            nearTest.src = nearUrl;
+            
+            // Also update legacy single snapshot panel
+            const legacyImg = document.getElementById('live-snapshot');
+            const legacyPanel = document.getElementById('snapshot-panel');
+            const cameraLabel = document.getElementById('camera-label');
+            
+            // Try near camera first for legacy panel
+            legacyImg.src = nearUrl;
+            legacyPanel.style.display = 'block';
+            cameraLabel.textContent = '(Near Camera)';
         }
 
         // Initial update
