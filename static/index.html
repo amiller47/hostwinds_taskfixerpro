@@ -263,6 +263,37 @@
             
             // Scale: houseSize in pixels maps to 180px radius on canvas
             const scale = 180.0 / (houseSize / 2);
+            
+            // Infer boundaries from calibration
+            // Near camera: hog line at TOP (Y=0), back line below house
+            // Far camera: back line at TOP, hog line at BOTTOM (Y=height)
+            const houseRadiusPx = houseSize / 2;
+            const rockWidth = 40; // approximate rock diameter in pixels
+            
+            // Frame dimensions (720x1280 for rtsp)
+            const frameHeight = 1280;
+            const frameWidth = 720;
+            
+            // Calculate boundaries
+            // Back line is approximately house_radius beyond the button
+            // Near camera: back line BELOW house (higher Y)
+            // Far camera: back line ABOVE house (lower Y)
+            let backLineY, hogLineY;
+            let leftBound, rightBound;
+            
+            if (end === 'near') {
+                // Near camera: hog at top, back line below
+                hogLineY = 100; // Near top of frame
+                backLineY = button[1] + houseRadiusPx + rockWidth;
+            } else {
+                // Far camera: back line above, hog at bottom
+                backLineY = button[1] - houseRadiusPx - rockWidth;
+                hogLineY = frameHeight - 100; // Near bottom
+            }
+            
+            // Side boundaries: house radius + buffer
+            leftBound = button[0] - houseRadiusPx - rockWidth;
+            rightBound = button[0] + houseRadiusPx + rockWidth;
 
             detections.forEach(det => {
                 // det format: [class, x, y, confidence]
@@ -272,6 +303,20 @@
                 
                 if (!detClass || !detClass.includes('rock')) {
                     return;
+                }
+                
+                // Filter by boundaries
+                if (detX < leftBound || detX > rightBound) {
+                    return; // Outside side lines
+                }
+                if (end === 'near') {
+                    if (detY > backLineY) {
+                        return; // Beyond back line (near camera)
+                    }
+                } else {
+                    if (detY < backLineY) {
+                        return; // Beyond back line (far camera)
+                    }
                 }
                 
                 // Calculate position relative to button
