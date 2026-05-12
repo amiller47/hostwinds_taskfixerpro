@@ -313,13 +313,20 @@ class UniversalCalibrator:
         return ((float(mean_x), float(mean_y)), float(confidence), len(positions))
     
     def _compute_house(self, boxes: List[Dict]) -> Tuple[float, Optional[Tuple[float, float]], int]:
-        """Compute house size and center from detections."""
+        """Compute house size and center from detections.
+        
+        House size uses the LARGER of width or height, since:
+        - The house is circular (12ft diameter)
+        - Camera perspective can make the bounding box elliptical
+        - Using the larger dimension ensures we don't underestimate
+        """
         if not boxes:
             return (0.0, None, 0)
         
-        # House size is the width of the bounding box
-        widths = [b['width'] for b in boxes]
-        house_size = float(np.median(widths))
+        # House size: use max of width/height for each detection
+        # This handles perspective distortion (elliptical bounding boxes)
+        max_sizes = [max(b['width'], b['height']) for b in boxes]
+        house_size = float(np.median(max_sizes))
         
         # House center
         centers_x = [b['x'] for b in boxes]

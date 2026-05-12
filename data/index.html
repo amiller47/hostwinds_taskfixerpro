@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Curling Live Dashboard - FCC Sheet 5</title>
+    <style>
+        /* Navigation */
+        .nav-bar {
+            background: #1a1a1a;
+            padding: 10px 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-bar h1 {
+            margin: 0;
+            font-size: 20px;
+        }
+        .nav-select {
+            padding: 8px 15px;
+            font-size: 14px;
+            border-radius: 5px;
+            background: #333;
+            color: #eee;
+            border: 1px solid #555;
+            cursor: pointer;
+        }
+        .nav-select:hover {
+            background: #444;
+        }
+
+        body {
+            background: #111;
+            color: #eee;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            text-align: center;
+            color: #0f0;
+        }
+        .container {
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .panel {
+            text-align: center;
+        }
+        canvas {
+            border: 2px solid #444;
+            border-radius: 10px;
+            background: #000;
+        }
+        h2 {
+            color: #0f0;
+            margin-bottom: 10px;
+        }
+        .score {
+            font-size: 24px;
+            font-weight: bold;
+            margin-top: 15px;
+        }
+        .info-bar {
+            text-align: center;
+            margin: 30px 0;
+            font-size: 28px;
+        }
+        .possession {
+            padding: 10px 20px;
+            border-radius: 8px;
+            display: inline-block;
+        }
+        .team-red { background: #8b0000; }
+        .team-yellow { background: #b8860b; color: #111; }
+        .debug-panel {
+            background: #1a1a1a;
+            border: 2px solid #333;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 20px auto;
+            max-width: 600px;
+        }
+        .debug-panel h3 {
+            color: #0f0;
+            margin-top: 0;
+        }
+        .state {
+            font-size: 18px;
+            margin: 5px 0;
+        }
+        .log-entry {
+            font-family: monospace;
+            font-size: 12px;
+            color: #aaa;
+            margin: 3px 0;
+        }
+        .update-time {
+            text-align: center;
+            color: #888;
+            font-size: 14px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="nav-bar">
+        <h1>🥌 Curling Live Dashboard</h1>
+        <select class="nav-select" onchange="window.location.href=this.value">
+            <option value="index.html" selected>Live Dashboard</option>
+            <option value="debug.html">Debug View</option>
+            <option value="coach.html">Coaching Review</option>
+            <option value="bingo.html">Curling Bingo</option>
+            <option value="shot.html">Shot Calling</option>
+        </select>
+    </div>
+
+    <script src="js/config.js"></script>
+
+    <div class="container">
+        <div class="panel">
+            <h2>Far End</h2>
+            <canvas id="far-sheet" width="400" height="800"></canvas>
+        </div>
+        
+        <div class="panel">
+            <h2>Near End</h2>
+            <canvas id="near-sheet" width="400" height="800"></canvas>
+        </div>
+        
+        <div class="panel" id="snapshot-panel" style="display: none;">
+            <h2>Live Video <span id="camera-label" style="color: #888;"></span></h2>
+            <img id="live-snapshot" width="400" style="border: 2px solid #333;">
+        </div>
+        
+        <!-- Debug: Show both camera feeds -->
+        <div class="container" style="margin-top: 20px;">
+            <div class="panel">
+                <h3 style="color: #4CAF50;">Far Camera Feed</h3>
+                <img id="far-snapshot" width="400" style="border: 2px solid #333; display: none;">
+                <div id="far-snapshot-status" style="color: #888;">No far camera data</div>
+            </div>
+            <div class="panel">
+                <h3 style="color: #2196F3;">Near Camera Feed</h3>
+                <img id="near-snapshot" width="400" style="border: 2px solid #333; display: none;">
+                <div id="near-snapshot-status" style="color: #888;">No near camera data</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-bar">
+        <div><strong>End:</strong> <span id="end-num">1</span></div>
+        <div><strong>Throwing:</strong> <span id="possession" class="possession team-red">RED</span></div>
+        <div class="score">
+            <span style="color: #ff6666;">Red: <span id="score-red">0</span></span>
+            &nbsp;|&nbsp;
+            <span style="color: #ffcc00;">Yellow: <span id="score-yellow">0</span></span>
+        </div>
+        <div style="margin-top: 10px; font-size: 18px;">
+            Throws: <span id="throws-red" style="color: #ff6666;">0</span> / 
+            <span id="throws-yellow" style="color: #ffcc00;">0</span>
+        </div>
+        <div style="margin-top: 8px; font-size: 12px; color: #0f0;">
+            🟢 Last deploy test: Apr 22 10:54 AKDT
+        </div>
+    </div>
+
+    <div class="debug-panel">
+        <h3>🔧 Game State</h3>
+        <div class="state"><strong>State:</strong> <span id="game-state">idle</span></div>
+        <div class="state"><strong>Rocks Near:</strong> <span id="rocks-near">0</span> (<span id="detections-near">0</span> det)</div>
+        <div class="state"><strong>Rocks Far:</strong> <span id="rocks-far">0</span> (<span id="detections-far">0</span> det)</div>
+        <div class="state"><strong>Calibration:</strong> <span id="calibration-status">checking...</span></div>
+        <div class="state"><strong>Trajectory:</strong> <span id="trajectory-status">No predictions</span></div>
+        <h3>📋 Recent Events</h3>
+        <div id="event-log"></div>
+    </div>
+
+    <div class="update-time">
+        Last updated: <span id="update-time">Never</span>
+    </div>
+
+    <script>
+        const canvases = {
+            far: document.getElementById('far-sheet').getContext('2d'),
+            near: document.getElementById('near-sheet').getContext('2d')
+        };
+
+        function drawSheet(ctx, end, data) {
+            const width = 400;
+            const height = 800;
+            ctx.clearRect(0, 0, width, height);
+
+            // Ice background
+            ctx.fillStyle = '#e8f4f8';
+            ctx.fillRect(0, 0, width, height);
+
+            // Center line
+            ctx.strokeStyle = '#666';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(width/2, 0);
+            ctx.lineTo(width/2, height);
+            ctx.stroke();
+
+            // Hog line
+            const hogY = end === 'far' ? height - 150 : 150;
+            ctx.strokeStyle = '#cc0000';
+            ctx.lineWidth = 6;
+            ctx.beginPath();
+            ctx.moveTo(0, hogY);
+            ctx.lineTo(width, hogY);
+            ctx.stroke();
+
+            // House
+            const houseY = end === 'far' ? 200 : height - 200;
+            const centerX = width / 2;
+            const radii = [180, 120, 60, 15];
+            const colors = ['rgba(255,0,0,0.3)', '#fff', '#4488ff', '#fff'];
+
+            radii.forEach((r, i) => {
+                ctx.beginPath();
+                ctx.arc(centerX, houseY, r, 0, Math.PI * 2);
+                ctx.fillStyle = colors[i];
+                ctx.fill();
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            });
+
+            // Draw rocks in house
+            const button = data.locked_button?.[end];
+            const houseSize = data.locked_house_size?.[end];
+            const detections = data.current_raw_detections?.[end] || [];
+            
+            // Debug: show detection count on each house
+            ctx.fillStyle = '#333';
+            ctx.font = '12px Arial';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Detections: ${detections.length}`, 10, 20);
+            
+            // Debug: log what we have
+            console.log(`${end} end: button=${JSON.stringify(button)}, houseSize=${houseSize}, detections=${detections.length}`);
+            
+            // Only plot if we have calibration AND detections
+            if (!button || !houseSize) {
+                // No calibration - show message
+                ctx.fillStyle = '#666';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Calibration needed', centerX, houseY);
+                return;
+            }
+            
+            // Scale: houseSize in pixels maps to 180px radius on canvas
+            const scale = 180.0 / (houseSize / 2);
+
+            detections.forEach(det => {
+                // det format: [class, x, y, confidence]
+                const detClass = det[0];
+                const detX = det[1];
+                const detY = det[2];
+                
+                if (!detClass || !detClass.includes('rock')) {
+                    return;
+                }
+                
+                // Calculate position relative to button
+                const dx = detX - button[0];
+                const dy = detY - button[1];
+                
+                // Transform to canvas coordinates
+                // Far camera: Y=0 is thrower side, Y increases toward house
+                // Rocks in house have Y near button (~596), rocks beyond have higher Y
+                // Canvas: house at Y=200, rocks beyond house = lower on canvas (higher Y)
+                // INVERT for far: rocks deeper in house = higher Y in video = lower on canvas
+                let rx = centerX + dx * scale;
+                let ry = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                
+                // Clamp to canvas bounds
+                rx = Math.max(20, Math.min(width - 20, rx));
+                ry = Math.max(20, Math.min(height - 20, ry));
+                
+                // Draw rock
+                const color = detClass.includes('red') ? '#cc0000' : '#ccaa00';
+                
+                ctx.beginPath();
+                ctx.arc(rx, ry, 14, 0, Math.PI * 2);
+                ctx.fillStyle = color;
+                ctx.fill();
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                
+                // Debug: show original coords
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${Math.round(detX)},${Math.round(detY)}`, rx, ry + 4);
+            });
+            
+            // Draw trajectory predictions for moving rocks
+            const predictions = data.trajectory_predictions || [];
+            predictions.forEach(pred => {
+                if (!pred.current_position || !pred.predicted_stop) return;
+                
+                // Get rock color
+                const rockColor = pred.color === 'red' ? '#cc0000' : '#ccaa00';
+                
+                // Current position in canvas coords
+                const curX = pred.current_position[0];
+                const curY = pred.current_position[1];
+                const dx = curX - button[0];
+                const dy = curY - button[1];
+                let startRx = centerX + dx * scale;
+                let startRy = houseY + dy * scale * (end === 'far' ? -1 : 1);
+                
+                // Predicted stop position in canvas coords
+                const stopX = pred.predicted_stop.x;
+                const stopY = pred.predicted_stop.y;
+                const stopDx = stopX - button[0];
+                const stopDy = stopY - button[1];
+                let stopRx = centerX + stopDx * scale;
+                let stopRy = houseY + stopDy * scale * (end === 'far' ? -1 : 1);
+                
+                // Clamp to bounds
+                startRx = Math.max(20, Math.min(width - 20, startRx));
+                startRy = Math.max(20, Math.min(height - 20, startRy));
+                stopRx = Math.max(20, Math.min(width - 20, stopRx));
+                stopRy = Math.max(20, Math.min(height - 20, stopRy));
+                
+                // Draw trajectory line (dotted)
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = rockColor;
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(startRx, startRy);
+                ctx.lineTo(stopRx, stopRy);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Draw ghost circle at predicted stop position
+                ctx.beginPath();
+                ctx.arc(stopRx, stopRy, 14, 0, Math.PI * 2);
+                ctx.strokeStyle = rockColor;
+                ctx.lineWidth = 2;
+                ctx.stroke();
+                ctx.fillStyle = rockColor.replace('cc', '66') + '40'; // semi-transparent fill
+                ctx.fill();
+                
+                // Show confidence
+                const conf = Math.round((pred.predicted_stop.confidence || 0) * 100);
+                ctx.fillStyle = '#fff';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${conf}%`, stopRx, stopRy + 4);
+            });
+        }
+
+        function updateDashboard() {
+            // Always load from data/dashboard_data.json (PHP not working on Hostwinds)
+            const dataUrl = '/curling/data/dashboard_data.json?t=' + Date.now();
+            
+            fetch(dataUrl)
+                .then(res => res.json())
+                .then(data => {
+                    const gs = data.game_state || {};
+                    
+                    // Update text
+                    document.getElementById('end-num').textContent = gs.end || 1;
+                    document.getElementById('game-state').textContent = gs.state || 'idle';
+                    document.getElementById('score-red').textContent = gs.score?.team_red || 0;
+                    document.getElementById('score-yellow').textContent = gs.score?.team_yellow || 0;
+                    document.getElementById('throws-red').textContent = gs.throws?.team_red || 0;
+                    document.getElementById('throws-yellow').textContent = gs.throws?.team_yellow || 0;
+                    document.getElementById('rocks-near').textContent = gs.near_rocks || 0;
+                    document.getElementById('rocks-far').textContent = gs.far_rocks || 0;
+                    
+                    // Detection counts
+                    const nearDets = data.current_raw_detections?.near?.length || 0;
+                    const farDets = data.current_raw_detections?.far?.length || 0;
+                    document.getElementById('detections-near').textContent = nearDets;
+                    document.getElementById('detections-far').textContent = farDets;
+                    
+                    // Calibration status
+                    const nearCal = data.locked_button?.near && data.locked_house_size?.near;
+                    const farCal = data.locked_button?.far && data.locked_house_size?.far;
+                    document.getElementById('calibration-status').textContent = 
+                        (nearCal ? 'Near OK' : 'Near missing') + ' | ' + (farCal ? 'Far OK' : 'Far missing');
+                    
+                    // Trajectory predictions status
+                    const trajPreds = data.trajectory_predictions || [];
+                    const movingCount = trajPreds.length;
+                    const trajStatus = movingCount > 0 
+                        ? `${movingCount} rock${movingCount > 1 ? 's' : ''} moving` 
+                        : 'No predictions';
+                    document.getElementById('trajectory-status').textContent = trajStatus;
+                    
+                    // Possession
+                    const possession = gs.possession || 'team_red';
+                    const possEl = document.getElementById('possession');
+                    possEl.textContent = possession.replace('team_', '').toUpperCase();
+                    possEl.className = 'possession ' + possession;
+                    
+                    // Draw sheets
+                    drawSheet(canvases.far, 'far', data);
+                    drawSheet(canvases.near, 'near', data);
+                    
+                    // Highlight active end based on camera processing
+                    const activeCamera = data.camera; // 'far' or 'near'
+                    const farSheet = document.getElementById('far-sheet');
+                    const nearSheet = document.getElementById('near-sheet');
+                    
+                    if (activeCamera === 'near') {
+                        // Processing near camera - highlight near sheet
+                        nearSheet.style.border = '3px solid #4CAF50';
+                        farSheet.style.border = '1px solid #333';
+                    } else if (activeCamera === 'far') {
+                        // Processing far camera - highlight far sheet
+                        farSheet.style.border = '3px solid #4CAF50';
+                        nearSheet.style.border = '1px solid #333';
+                    }
+                    
+                    // Event log
+                    const events = data.debug_logs || [];
+                    document.getElementById('event-log').innerHTML = events
+                        .slice(0, 5)
+                        .map(e => `<div class="log-entry">${e}</div>`)
+                        .join('');
+                    
+                    document.getElementById('update-time').textContent = 
+                        data.received_at || 'Never';
+                    
+                    // Show which camera should be active based on end
+                    const endNum = gs.end || 1;
+                    const cameraLabel = document.getElementById('camera-label');
+                    if (cameraLabel) {
+                        if (endNum % 2 === 1) {
+                            cameraLabel.textContent = '(Far End - Odd)';
+                            cameraLabel.style.color = '#4CAF50';
+                        } else {
+                            cameraLabel.textContent = '(Near End - Even)';
+                            cameraLabel.style.color = '#2196F3';
+                        }
+                    }
+                    
+                    // Update snapshot if available
+                    updateSnapshot();
+                })
+                .catch(err => console.error('Update failed:', err));
+        }
+        
+        function updateSnapshot() {
+            // Update both camera snapshots
+            const timestamp = Date.now();
+            const isHostwinds = window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1';
+            const basePath = isHostwinds ? '/curling/data/' : '/data/';
+            
+            // Far camera snapshot (snapshot_0.jpg for cam1/far)
+            const farImg = document.getElementById('far-snapshot');
+            const farStatus = document.getElementById('far-snapshot-status');
+            const farUrl = basePath + 'snapshot_0.jpg?t=' + timestamp;
+            
+            const farTest = new Image();
+            farTest.onload = function() {
+                farImg.src = farUrl;
+                farImg.style.display = 'block';
+                farStatus.style.display = 'none';
+            };
+            farTest.onerror = function() {
+                farImg.style.display = 'none';
+                farStatus.style.display = 'block';
+                farStatus.textContent = 'No far camera data';
+            };
+            farTest.src = farUrl;
+            
+            // Near camera snapshot (snapshot_1.jpg for cam2/near)
+            const nearImg = document.getElementById('near-snapshot');
+            const nearStatus = document.getElementById('near-snapshot-status');
+            const nearUrl = basePath + 'snapshot_1.jpg?t=' + timestamp;
+            
+            const nearTest = new Image();
+            nearTest.onload = function() {
+                nearImg.src = nearUrl;
+                nearImg.style.display = 'block';
+                nearStatus.style.display = 'none';
+            };
+            nearTest.onerror = function() {
+                nearImg.style.display = 'none';
+                nearStatus.style.display = 'block';
+                nearStatus.textContent = 'No near camera data';
+            };
+            nearTest.src = nearUrl;
+            
+            // Also update legacy single snapshot panel
+            const legacyImg = document.getElementById('live-snapshot');
+            const legacyPanel = document.getElementById('snapshot-panel');
+            const cameraLabel = document.getElementById('camera-label');
+            
+            // Try near camera first for legacy panel
+            legacyImg.src = nearUrl;
+            legacyPanel.style.display = 'block';
+            cameraLabel.textContent = '(Near Camera)';
+        }
+
+        // Initial update
+        updateDashboard();
+        
+        // Refresh every 2 seconds
+        setInterval(updateDashboard, 2000);
+    </script>
+</body>
+</html>

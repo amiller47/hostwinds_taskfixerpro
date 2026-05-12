@@ -60,14 +60,23 @@
           349.0,
           697.0
         ],
-        "house_size": 748.7,
+        "house_size": 611.0,
         "source": "rtsp://...241",
         "notes": "Live RTSP and full game recordings (cam2) - estimated from far camera"
       },
       "wide": {
-        "resolution": [1280, 720],
-        "button": [637.0, 134.0],
-        "button_std": [2.0, 1.5],
+        "resolution": [
+          1280,
+          720
+        ],
+        "button": [
+          637.0,
+          134.0
+        ],
+        "button_std": [
+          2.0,
+          1.5
+        ],
         "house_size": null,
         "source": "/home/curl/Videos/curling/cam3_20260330_194005.mp4",
         "model": "fcc-instance-detection/7",

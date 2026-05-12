@@ -1,18 +1,18 @@
 {
   "game_state": {
-    "possession": "team_red",
+    "possession": "team_yellow",
     "next_shooter": null,
     "score": {
       "team_red": 0,
-      "team_yellow": 3
+      "team_yellow": 0
     },
-    "end": 7,
-    "state": "idle",
+    "end": 1,
+    "state": "rock_in_flight",
     "throws": {
-      "team_red": 0,
+      "team_red": 2,
       "team_yellow": 1
     },
-    "total_throws": 1
+    "total_throws": 3
   },
   "locked_button": {
     "near": [
@@ -25,31 +25,103 @@
     ]
   },
   "locked_house_size": {
-    "near": 748.7,
+    "near": 540.0,
     "far": 748.7
   },
   "current_raw_detections": {
-    "far": [
+    "far": [],
+    "near": [
       [
-        "Button",
-        362.0,
-        596.0,
-        0.9215692281723022
+        "yellow-rock",
+        376.5,
+        299.5,
+        0.9579402804374695
       ],
       [
         "yellow-rock",
-        687.0,
-        30.0,
-        0.9178684949874878
+        360.5,
+        989.0,
+        0.9575818181037903
+      ],
+      [
+        "yellow-rock",
+        260.0,
+        303.5,
+        0.9483454823493958
+      ],
+      [
+        "red-rock",
+        228.5,
+        81.0,
+        0.9421268105506897
+      ],
+      [
+        "yellow-rock",
+        390.0,
+        379.5,
+        0.9402145743370056
+      ],
+      [
+        "red-rock",
+        347.0,
+        350.5,
+        0.935265302658081
+      ],
+      [
+        "Button",
+        348.5,
+        697.5,
+        0.9280189871788025
+      ],
+      [
+        "red-rock",
+        613.5,
+        1179.0,
+        0.9267058968544006
+      ],
+      [
+        "red-rock",
+        583.5,
+        1212.0,
+        0.9087823033332825
+      ],
+      [
+        "red-rock",
+        575.5,
+        1250.0,
+        0.9075810313224792
+      ],
+      [
+        "yellow-rock",
+        76.0,
+        1209.5,
+        0.9049736857414246
+      ],
+      [
+        "red-rock",
+        29.5,
+        1176.5,
+        0.901702880859375
+      ],
+      [
+        "yellow-rock",
+        631.5,
+        1218.0,
+        0.8966079354286194
       ],
       [
         "house",
-        387.0,
-        596.5,
-        0.8396806716918945
+        351.0,
+        707.5,
+        0.8252052068710327
+      ],
+      [
+        "yellow-rock",
+        77.5,
+        1233.5,
+        0.7146198749542236
       ]
-    ],
-    "near": []
+    ]
   },
   "wide_data": {
     "wide_rocks": [],
@@ -57,120 +129,24 @@
     "video_timestamp": "N/A"
   },
   "system_status": {
-    "last_score": "End 6: Red 0 - Yellow 0",
+    "last_score": "No end completed yet",
     "fps": 0.0,
     "model": "fcc-curling-rock-detection/17"
   },
-  "trajectory_predictions": [
-    {
-      "rock_id": 4,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 252.8043131839541,
-        "y": 525.9152813204282,
-        "confidence": 0.46264163249956136,
-        "time_to_stop": 18.250000000000124,
-        "distance": 289.54570434526005
-      }
-    },
-    {
-      "rock_id": 6,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 777.5315284642794,
-        "y": -56.59877602371528,
-        "confidence": 0.19123093260331192,
-        "time_to_stop": 12.35000000000004,
-        "distance": 107.89519755911593
-      }
-    },
-    {
-      "rock_id": 10,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 740.4784203395592,
-        "y": 127.82404558709678,
-        "confidence": 0.18206737582605098,
-        "time_to_stop": 12.050000000000036,
-        "distance": 101.84544286852527
-      }
-    },
-    {
-      "rock_id": 11,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 345.2648398128476,
-        "y": 691.5045698340962,
-        "confidence": 0.732955473319167,
-        "time_to_stop": 21.35000000000017,
-        "distance": 470.52887481260393
-      }
-    },
-    {
-      "rock_id": 15,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 386.9440369279936,
-        "y": 90.69858796665403,
-        "confidence": 0.10064496175140945,
-        "time_to_stop": 8.09999999999998,
-        "distance": 47.36557348736019
-      }
-    },
-    {
-      "rock_id": 19,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 279.78014103221955,
-        "y": 57.2953709942358,
-        "confidence": 0.1663965917755854,
-        "time_to_stop": 11.450000000000028,
-        "distance": 91.35908292562468
-      }
-    },
-    {
-      "rock_id": 26,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 192.0438987014831,
-        "y": 712.5901269627776,
-        "confidence": 0.5288227000217709,
-        "time_to_stop": 19.150000000000137,
-        "distance": 333.8581012579062
-      }
-    },
-    {
-      "rock_id": 28,
-      "color": "unknown",
-      "current_position": null,
-      "predicted_stop": {
-        "x": 419.4162805295306,
-        "y": -1.7988605841197836,
-        "confidence": 0.3680790409901733,
-        "time_to_stop": 16.750000000000103,
-        "distance": 226.34038839845468
-      }
-    }
-  ],
+  "trajectory_predictions": [],
   "debug_logs": [
-    "Throw complete: team_yellow, total 15",
+    "Throw complete: team_red, total 1",
     "throw_started",
     "rocks_settling",
-    "Rocks settled (1 moving)",
-    "Throw complete: team_red, total 16",
-    "End 6 complete: Red 0 - Yellow 0",
+    "Rocks settled (3 moving)",
+    "Throw complete: team_yellow, total 2",
     "throw_started",
     "rocks_settling",
-    "Rocks settled (0 moving)",
-    "Throw complete: team_yellow, total 1"
+    "Rocks settled (3 moving)",
+    "Throw complete: team_red, total 3",
+    "throw_started"
   ],
-  "received_at": "2026-04-22 11:36:11",
-  "last_update": 1776886571.2268555
+  "received_at": "2026-05-12 10:58:16",
+  "last_update": 1778612296.412396,
+  "camera": "near"
 }
