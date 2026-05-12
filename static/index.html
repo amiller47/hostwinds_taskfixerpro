@@ -238,11 +238,15 @@
             const houseSize = data.locked_house_size?.[end];
             const detections = data.current_raw_detections?.[end] || [];
             
-            // Debug: show detection count on each house
+            // Debug: show detection count and house size on each house
             ctx.fillStyle = '#333';
             ctx.font = '12px Arial';
             ctx.textAlign = 'left';
             ctx.fillText(`Detections: ${detections.length}`, 10, 20);
+            ctx.fillText(`House: ${Math.round(houseSize)}px`, 10, 35);
+            
+            // House radius in video pixels
+            const houseRadius = houseSize / 2;
             
             // Debug: log what we have
             console.log(`${end} end: button=${JSON.stringify(button)}, houseSize=${houseSize}, detections=${detections.length}`);
@@ -259,6 +263,13 @@
             
             // Scale: houseSize in pixels maps to 180px radius on canvas
             const scale = 180.0 / (houseSize / 2);
+            // House radius in video pixels
+            const houseRadiusPx = houseSize / 2;
+
+            // Filter rocks: only plot those within house or near it
+            // In curling, rocks "behind the back line" (outside house) don't count
+            // We'll allow rocks within house_radius * 1.5 to show rocks near house
+            const maxDist = houseRadiusPx * 1.5;
 
             detections.forEach(det => {
                 // det format: [class, x, y, confidence]
@@ -270,9 +281,16 @@
                     return;
                 }
                 
-                // Calculate position relative to button
+                // Calculate distance from button
                 const dx = detX - button[0];
                 const dy = detY - button[1];
+                const dist = Math.sqrt(dx*dx + dy*dy);
+                
+                // Skip rocks outside the playable area (behind back line)
+                // These are rocks far from the house
+                if (dist > maxDist) {
+                    return;
+                }
                 
                 // Transform to canvas coordinates
                 // Far camera: Y=0 is thrower side, Y increases toward house
@@ -365,6 +383,9 @@
         function updateDashboard() {
             // Always load from data/dashboard_data.json (PHP not working on Hostwinds)
             const dataUrl = '/curling/data/dashboard_data.json?t=' + Date.now();
+            
+            // Add timestamp to snapshots for cache busting
+            const snapshotTs = Date.now();
             
             fetch(dataUrl)
                 .then(res => res.json())
