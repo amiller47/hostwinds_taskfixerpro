@@ -322,25 +322,15 @@
                 
                 // Transform to canvas coordinates
                 //
-                // NEAR CAMERA:
-                // - Top of frame (Y=0) = hog line side
-                // - Bottom of frame (Y=1280) = back line side
-                // - House in lower portion of frame
-                // - Rocks with Y > button_y are closer to back line
-                // - Canvas: house at bottom (Y=600), higher Y in video = higher Y on canvas
+                // Both cameras:
+                // - Higher Y in video = lower on canvas (toward bottom)
+                // - dy > 0 means rock is below button in video
+                // - Below button plots further from house center on canvas
                 //
-                // FAR CAMERA:
-                // - Top of frame (Y=0) = back line side
-                // - Bottom of frame (Y=1280) = hog line side  
-                // - House in upper portion of frame
-                // - Rocks with Y > button_y are closer to hog line (opposite of near!)
-                // - Canvas: house at top (Y=200), higher Y in video = higher Y on canvas (SAME direction)
+                // The canvas house positions handle the orientation:
+                // - Far canvas: houseY = 200 (top), so rocks below button plot toward bottom
+                // - Near canvas: houseY = 600 (bottom), so rocks below button plot toward bottom
                 //
-                // Both cameras: dy > 0 means rock is below button in video frame
-                // - Near: below button = toward back line = should plot lower on canvas (higher Y)
-                // - Far: below button = toward hog line = should plot lower on canvas (higher Y)
-                //
-                // So NO flip needed - same formula for both!
                 let rx = centerX + dx * scale;
                 let ry = houseY + dy * scale;
                 
