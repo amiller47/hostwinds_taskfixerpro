@@ -3,16 +3,16 @@
     "possession": "team_yellow",
     "next_shooter": null,
     "score": {
-      "team_red": 0,
+      "team_red": 1,
       "team_yellow": 0
     },
-    "end": 1,
-    "state": "rocks_settling",
+    "end": 2,
+    "state": "rock_in_flight",
     "throws": {
-      "team_red": 2,
-      "team_yellow": 1
+      "team_red": 5,
+      "team_yellow": 4
     },
-    "total_throws": 3
+    "total_throws": 9
   },
   "locked_button": {
     "near": [
@@ -31,52 +31,64 @@
   "current_raw_detections": {
     "far": [
       [
+        "yellow-rock",
+        447.0,
+        821.0,
+        0.9468369483947754
+      ],
+      [
+        "yellow-rock",
+        488.5,
+        493.5,
+        0.9446698427200317
+      ],
+      [
         "red-rock",
-        471.0,
-        433.0,
-        0.9477831721305847
+        481.0,
+        377.5,
+        0.9442144632339478
       ],
       [
         "yellow-rock",
         529.5,
         907.0,
-        0.9354351162910461
-      ],
-      [
-        "red-rock",
-        248.0,
-        774.5,
-        0.9348102807998657
+        0.9355559349060059
       ],
       [
         "Button",
-        361.5,
-        597.5,
-        0.9258322715759277
+        362.5,
+        596.5,
+        0.9236347079277039
+      ],
+      [
+        "yellow-rock",
+        33.0,
+        10.5,
+        0.9048191905021667
       ],
       [
         "yellow-rock",
         14.5,
-        42.5,
-        0.8872559070587158
+        43.0,
+        0.8887140154838562
       ],
       [
         "yellow-rock",
         7.0,
-        70.5,
-        0.878424882888794
+        70.0,
+        0.8729540109634399
       ],
       [
         "house",
         387.0,
-        602.0,
-        0.811994731426239
+        603.0,
+        0.8088842630386353
       ],
       [
-        "yellow-rock",
-        34.0,
-        11.0,
-        0.7691856026649475
+        "red-rock",
+        73.0,
+        9.5,
+        0.6781198978424072
       ]
     ],
     "near": []
@@ -87,24 +99,49 @@
     "video_timestamp": "N/A"
   },
   "system_status": {
-    "last_score": "No end completed yet",
+    "last_score": "End 1: Red 1 - Yellow 0",
     "fps": 0.0,
     "model": "fcc-curling-rock-detection/17"
   },
-  "trajectory_predictions": [],
-  "debug_logs": [
-    "throw_started",
-    "rocks_settling",
-    "Rocks settled (1 moving)",
-    "Throw complete: team_yellow, total 2",
-    "throw_started",
-    "rocks_settling",
-    "Rocks settled (1 moving)",
-    "Throw complete: team_red, total 3",
-    "throw_started",
-    "rocks_settling"
+  "trajectory_predictions": [
+    {
+      "rock_id": 5,
+      "color": "unknown",
+      "current_position": null,
+      "predicted_stop": {
+        "x": 11.354621538883318,
+        "y": 453.2029661198913,
+        "confidence": 0.12952979354295668,
+        "time_to_stop": 9.800000000000004,
+        "distance": 66.74807597086418
+      }
+    },
+    {
+      "rock_id": 8,
+      "color": "unknown",
+      "current_position": null,
+      "predicted_stop": {
+        "x": 399.3497009599203,
+        "y": 1025.4206970245052,
+        "confidence": 0.13970503934385098,
+        "time_to_stop": 10.300000000000011,
+        "distance": 73.54463484532033
+      }
+    }
   ],
-  "received_at": "2026-05-12 11:38:39",
-  "last_update": 1778614719.3147786,
+  "debug_logs": [
+    "Throw complete: team_red, total 7",
+    "throw_started",
+    "rocks_settling",
+    "Rocks settled (2 moving)",
+    "Throw complete: team_yellow, total 8",
+    "throw_started",
+    "rocks_settling",
+    "Rocks settled (2 moving)",
+    "Throw complete: team_red, total 9",
+    "throw_started"
+  ],
+  "received_at": "2026-05-12 23:01:31",
+  "last_update": 1778655691.0601623,
   "camera": "far"
 }

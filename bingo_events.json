@@ -1,7 +1,7 @@
 {
   "events": [
-    "biting_12",
     "blank_end",
+    "biting_12",
     "in_house"
   ],
   "count": 3
