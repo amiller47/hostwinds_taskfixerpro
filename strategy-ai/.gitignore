@@ -5,12 +5,18 @@ videos/chunks/
 *.mp4
 *.mp3
 
+# Vision-enriched transcripts (large)
+transcripts/*_vision.json
+
 # Python
 venv/
 __pycache__/
 *.pyc
 *.pyo
 .env
+
+# Frames
+frames/
 
 # OS
 .DS_Store
