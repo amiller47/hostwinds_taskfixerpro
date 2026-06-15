@@ -284,7 +284,7 @@
         <div class="segments" id="segments">
             {% for segment in transcript.segments %}
             <div class="segment" data-idx="{{ loop.index0 }}" onclick="selectSegment({{ loop.index0 }})">
-                <div class="segment-time">{{ (segment.start / 60)|int }}:{{ (segment.start % 60)|int|printf('%02d') }}</div>
+                <div class="segment-time">{{ (segment.start / 60)|int }}:{{ '%02d'|format((segment.start % 60)|int) }}</div>
                 <div class="segment-text">{{ segment.text[:100] }}{% if segment.text|length > 100 %}...{% endif %}</div>
                 {% if segment.vision %}
                 <div class="segment-vision">
