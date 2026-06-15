@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Annotate - {{ transcript_name }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #0f1419;
+            color: #fff;
+            min-height: 100vh;
+        }
+        .header {
+            background: #1e3a5f;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 {
+            font-size: 1.2rem;
+        }
+        .nav {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #fff;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .stats {
+            background: #1a1a2e;
+            padding: 10px 20px;
+            display: flex;
+            gap: 20px;
+            font-size: 0.85rem;
+        }
+        .stat {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .stat-value {
+            font-weight: bold;
+        }
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: #4CAF50;
+            transition: width 0.3s;
+        }
+        .main {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            padding: 20px;
+            max-height: calc(100vh - 100px);
+            overflow-y: auto;
+        }
+        .segments {
+            overflow-y: auto;
+            max-height: calc(100vh - 140px);
+        }
+        .segment {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+        }
+        .segment:hover {
+            background: #252540;
+        }
+        .segment.active {
+            border-color: #4CAF50;
+            background: #1a2e1a;
+        }
+        .segment.annotated {
+            border-left: 3px solid #4CAF50;
+        }
+        .segment.strategic {
+            border-left: 3px solid #FF9800;
+        }
+        .segment-time {
+            font-size: 0.8rem;
+            opacity: 0.6;
+            margin-bottom: 5px;
+        }
+        .segment-text {
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+        .segment-vision {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            font-size: 0.85rem;
+        }
+        .vision-rocks {
+            display: flex;
+            gap: 15px;
+        }
+        .rock-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .rock-red { color: #ff6b6b; }
+        .rock-yellow { color: #ffd93d; }
+        .detail-panel {
+            position: sticky;
+            top: 100px;
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 20px;
+            height: fit-content;
+        }
+        .detail-time {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .detail-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+        }
+        .vision-data {
+            margin-bottom: 20px;
+        }
+        .vision-data h3 {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 10px;
+        }
+        .frame-preview {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            background: #000;
+        }
+        .game-state {
+            background: rgba(255,255,255,0.05);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        .game-state-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .game-state-label {
+            opacity: 0.7;
+        }
+        .game-state-value {
+            font-weight: bold;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-strategic {
+            background: #FF9800;
+            color: #fff;
+        }
+        .btn-strategic:hover {
+            background: #F57C00;
+        }
+        .btn-not-strategic {
+            background: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+        .btn-not-strategic:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .btn-skip {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fff;
+        }
+        .notes {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 6px;
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            font-size: 0.9rem;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .notes:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        .shortcuts {
+            margin-top: 15px;
+            font-size: 0.8rem;
+            opacity: 0.6;
+        }
+        .shortcuts kbd {
+            background: rgba(255,255,255,0.1);
+            padding: 2px 6px;
+            border-radius: 3px;
+            margin: 0 2px;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>{{ transcript_name }}</h1>
+        <div class="nav">
+            <button class="nav-btn" onclick="window.location='/'">← Back</button>
+            <button class="nav-btn" onclick="exportData()">Export</button>
+        </div>
+    </div>
+
+    <div class="stats">
+        <div class="stat">
+            <span>Annotated:</span>
+            <span class="stat-value" id="stat-annotated">0</span>
+            <span>/ {{ transcript.segments|length }}</span>
+        </div>
+        <div class="stat">
+            <span>Strategic:</span>
+            <span class="stat-value" id="stat-strategic">0</span>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progress" style="width: 0%"></div>
+        </div>
+    </div>
+
+    <div class="main">
+        <div class="segments" id="segments">
+            {% for segment in transcript.segments %}
+            <div class="segment" data-idx="{{ loop.index0 }}" onclick="selectSegment({{ loop.index0 }})">
+                <div class="segment-time">{{ (segment.start / 60)|int }}:{{ (segment.start % 60)|int|printf('%02d') }}</div>
+                <div class="segment-text">{{ segment.text[:100] }}{% if segment.text|length > 100 %}...{% endif %}</div>
+                {% if segment.vision %}
+                <div class="segment-vision">
+                    <div class="vision-rocks">
+                        <div class="rock-count">
+                            <span class="rock-red">🔴</span>
+                            <span>{{ segment.vision.rock_count.red }}</span>
+                        </div>
+                        <div class="rock-count">
+                            <span class="rock-yellow">🟡</span>
+                            <span>{{ segment.vision.rock_count.yellow }}</span>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="detail-panel" id="detail-panel">
+            <div class="empty-state">
+                <p>Select a segment to annotate</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentIdx = null;
+        const totalSegments = {{ transcript.segments|length }};
+        let annotations = {};
+
+        // Load existing annotations
+        {% for ann in annotations.annotations %}
+        annotations[{{ ann.segment_idx }}] = {{ ann|tojson }};
+        {% endfor %}
+
+        function updateStats() {
+            const annotated = Object.keys(annotations).length;
+            const strategic = Object.values(annotations).filter(a => a.is_strategic).length;
+
+            document.getElementById('stat-annotated').textContent = annotated;
+            document.getElementById('stat-strategic').textContent = strategic;
+            document.getElementById('progress').style.width = (annotated / totalSegments * 100) + '%';
+
+            // Update segment styles
+            document.querySelectorAll('.segment').forEach(el => {
+                const idx = parseInt(el.dataset.idx);
+                if (annotations[idx]) {
+                    el.classList.add('annotated');
+                    if (annotations[idx].is_strategic) {
+                        el.classList.add('strategic');
+                    }
+                }
+            });
+        }
+
+        function selectSegment(idx) {
+            currentIdx = idx;
+
+            // Update active segment
+            document.querySelectorAll('.segment').forEach(el => {
+                el.classList.remove('active');
+            });
+            document.querySelector(`.segment[data-idx="${idx}"]`).classList.add('active');
+
+            // Load segment data
+            fetch(`/api/segment/{{ transcript_name }}/${idx}`)
+                .then(r => r.json())
+                .then(data => {
+                    renderDetail(data);
+                });
+        }
+
+        function renderDetail(data) {
+            const segment = data.segment;
+            const annotation = data.annotation || {};
+            const vision = segment.vision || {};
+
+            const startMin = Math.floor(segment.start / 60);
+            const startSec = Math.floor(segment.start % 60);
+
+            let frameHtml = '';
+            if (vision.frame_path) {
+                frameHtml = `<img src="/frames/${vision.frame_path}" class="frame-preview" alt="Frame at ${startMin}:${startSec}">`;
+            }
+
+            let visionHtml = '';
+            if (vision.rocks) {
+                visionHtml = `
+                    <div class="game-state">
+                        <h3>Vision Data</h3>
+                        <div class="game-state-row">
+                            <span class="game-state-label">Red rocks:</span>
+                            <span class="game-state-value">${vision.rock_count.red}</span>
+                        </div>
+                        <div class="game-state-row">
+                            <span class="game-state-label">Yellow rocks:</span>
+                            <span class="game-state-value">${vision.rock_count.yellow}</span>
+                        </div>
+                        ${vision.score_analysis ? `
+                        <div class="game-state-row">
+                            <span class="game-state-label">Scoring:</span>
+                            <span class="game-state-value">${vision.score_analysis.scoring} ${vision.score_analysis.points}</span>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
+            document.getElementById('detail-panel').innerHTML = `
+                <div class="detail-time">${String(startMin).padStart(2, '0')}:${String(startSec).padStart(2, '0')}</div>
+                ${frameHtml}
+                <div class="detail-text">${segment.text}</div>
+                ${visionHtml}
+                <div class="game-state">
+                    <h3>Game State (optional)</h3>
+                    <div class="game-state-row">
+                        <span class="game-state-label">End:</span>
+                        <input type="number" id="game-end" value="${annotation.game_state?.end || ''}" style="width: 60px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px; color: #fff;">
+                    </div>
+                    <div class="game-state-row">
+                        <span class="game-state-label">Score (Red):</span>
+                        <input type="number" id="game-score-red" value="${annotation.game_state?.score?.red || vision.score_analysis?.red_in_house || ''}" style="width: 60px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px; color: #fff;">
+                    </div>
+                    <div class="game-state-row">
+                        <span class="game-state-label">Score (Yellow):</span>
+                        <input type="number" id="game-score-yellow" value="${annotation.game_state?.score?.yellow || vision.score_analysis?.yellow_in_house || ''}" style="width: 60px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px; color: #fff;">
+                    </div>
+                    <div class="game-state-row">
+                        <span class="game-state-label">Hammer:</span>
+                        <select id="game-hammer" style="background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 4px; padding: 4px; color: #fff;">
+                            <option value="" ${!annotation.game_state?.hammer ? 'selected' : ''}>Unknown</option>
+                            <option value="red" ${annotation.game_state?.hammer === 'red' ? 'selected' : ''}>Red</option>
+                            <option value="yellow" ${annotation.game_state?.hammer === 'yellow' ? 'selected' : ''}>Yellow</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="buttons">
+                    <button class="btn btn-strategic" onclick="saveAnnotation(true)">Strategic (S)</button>
+                    <button class="btn btn-not-strategic" onclick="saveAnnotation(false)">Not Strategic (N)</button>
+                </div>
+                <textarea class="notes" id="notes" placeholder="Notes (optional)">${annotation.notes || ''}</textarea>
+                <div class="shortcuts">
+                    <kbd>S</kbd> Strategic &nbsp; <kbd>N</kbd> Not Strategic &nbsp; <kbd>→</kbd> Next &nbsp; <kbd>←</kbd> Previous
+                </div>
+            `;
+        }
+
+        function saveAnnotation(isStrategic) {
+            if (currentIdx === null) return;
+
+            const gameState = {
+                end: document.getElementById('game-end')?.value || null,
+                score: {
+                    red: parseInt(document.getElementById('game-score-red')?.value) || null,
+                    yellow: parseInt(document.getElementById('game-score-yellow')?.value) || null
+                },
+                hammer: document.getElementById('game-hammer')?.value || null
+            };
+
+            const notes = document.getElementById('notes')?.value || '';
+
+            fetch('/api/save', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    transcript_name: '{{ transcript_name }}',
+                    segment_idx: currentIdx,
+                    is_strategic: isStrategic,
+                    game_state: gameState,
+                    notes: notes
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.success) {
+                    annotations[currentIdx] = {
+                        segment_idx: currentIdx,
+                        is_strategic: isStrategic,
+                        game_state: gameState,
+                        notes: notes
+                    };
+                    updateStats();
+
+                    // Move to next segment
+                    if (currentIdx < totalSegments - 1) {
+                        selectSegment(currentIdx + 1);
+                    }
+                }
+            });
+        }
+
+        function exportData() {
+            window.location = `/export/{{ transcript_name }}`;
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+
+            if (e.key === 's' || e.key === 'S') {
+                e.preventDefault();
+                saveAnnotation(true);
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                saveAnnotation(false);
+            } else if (e.key === 'ArrowRight' && currentIdx !== null && currentIdx < totalSegments - 1) {
+                selectSegment(currentIdx + 1);
+            } else if (e.key === 'ArrowLeft' && currentIdx !== null && currentIdx > 0) {
+                selectSegment(currentIdx - 1);
+            }
+        });
+
+        // Initialize
+        updateStats();
+        selectSegment(0);
+    </script>
+</body>
+</html>
