@@ -4,211 +4,237 @@
 
 Build an AI curling strategy expert that provides real-time strategic commentary integrated with the FCC Sheet5 Vision System.
 
-## Use Cases
-
-1. **Broadcast Commentary** — Real-time analysis during club games
-2. **Coaching Advice** — Strategic recommendations for players during play
-3. **Post-Game Analysis** — Break down key moments and decision points
-
-## Project Location
-
-`/home/curl/curling-strategy-data/` (on curl-pi5-canakit)
+**Goal:** Train a model that understands curling strategy and can commentate on games in real-time.
 
 ---
 
-## Three-Phase Roadmap
+## What We Built (June 14-15, 2026)
 
-### Phase 1: Data Collection & Knowledge Base
-**Hardware:** Pi 5 (curl-pi5-canakit)
-**Duration:** 4-6 weeks
-**Status:** 🟡 Starting
+### Phase 1: Data Collection Pipeline ✅
 
-**Goal:** Build a dataset of `{game_state} → {strategic_commentary}` pairs.
+**Location:** `/home/curl/curling_vision/strategy-ai/`
 
-**Steps:**
-1. Download Brier/Scotties/Olympics videos from YouTube
-2. Transcribe commentary using Whisper
-3. Annotate strategic moments with game state
-4. Target: 1000+ annotated moments
+| Tool | Purpose | Status |
+|------|---------|--------|
+| `download_video.py` | Download YouTube videos | ✅ Working |
+| `transcribe_xai.py` | Transcribe using xAI Speech-to-Text | ✅ Working |
+| `transcribe_chunked.py` | Handle large videos (30-min chunks) | ✅ Working |
+| `sync_vision_transcript.py` | Extract frames + run rock detection | ✅ Working |
+| `annotate_app.py` | Web interface for marking strategic moments | ✅ Working |
 
-**Deliverables:**
-- `/home/curl/curling-strategy-data/videos/` — Downloaded videos
-- `/home/curl/curling-strategy-data/transcripts/` — Whisper transcriptions
-- `/home/curl/curling-strategy-data/annotations/` — Annotated strategic moments
-- `/home/curl/curling-strategy-data/dataset.jsonl` — Training dataset
+### First Dataset
 
-**Training Data Sources:**
-- Brier (Canadian Men's Championship) — YouTube
-- Scotties (Canadian Women's Championship) — YouTube
-- Olympics — YouTube (after Brier/Scotties)
-- "Curl to Win" by Andy's digital copy
-- Strategy books/guides (TBD)
-
----
-
-### Phase 2: Model Training
-**Hardware:** Rocky's Mac mini (16GB unified memory) or Pi 5
-**Duration:** 4-8 weeks
-**Status:** 🔴 Blocked (waiting for Phase 1 data)
-
-**Goal:** Fine-tune an LLM to generate strategic commentary from game state.
-
-**Approach:**
-- Fine-tune Llama 3.1 8B or Mistral 7B
-- Training on `{game_state, commentary}` pairs
-- Evaluate against held-out games
-
-**Deliverables:**
-- Fine-tuned model weights
-- Inference pipeline
-- Evaluation metrics
-
-**Model Candidates:**
-| Model | Size | Pros | Cons |
-|-------|------|------|------|
-| Llama 3.1 8B | Small | Runs on Pi 5, fast | Limited reasoning |
-| Mistral 7B | Small | Good performance | Needs fine-tuning |
-| GPT-4 / Claude API | Large | Best reasoning | Costs money, latency |
-
-**Recommendation:** Start with Llama 3.1 8B fine-tuned locally.
-
----
-
-### Phase 3: Vision Integration
-**Hardware:** Pi 5 (with Vision System)
-**Duration:** 2-4 weeks
-**Status:** 🔴 Blocked (waiting for Phase 2 model)
-
-**Goal:** Connect trained model to FCC Sheet5 Vision System.
-
-**Pipeline:**
-```
-Vision System → Game State JSON → Strategy Model → Commentary Text → TTS → Speaker
-```
-
-**What We Already Have:**
-- Rock positions (JSON from vision system)
-- Game state (score, end, hammer, shot number)
-- Shot classification (draw, takeout, guard)
-
-**What We Need:**
-- Strategic reasoning prompt construction
-- Model inference pipeline
-- Output formatting (short, punchy commentary)
-- Integration with Curly's TTS model (optional)
-
-**Deliverables:**
-- `strategy_engine.py` — Game state → commentary
-- Integration with existing `game_tracker.py`
-- Real-time commentary output
-
----
-
-## Directory Structure
-
-```
-/home/curl/curling-strategy-data/
-├── PROJECT.md              # This file
-├── videos/                 # Downloaded curling videos
-│   ├── brier_2024_final.mp4
-│   ├── scotties_2024_final.mp4
-│   └── ...
-├── transcripts/            # Whisper transcriptions
-│   ├── brier_2024_final.json
-│   └── ...
-├── annotations/            # Annotated strategic moments
-│   ├── brier_2024_final_annotated.json
-│   └── ...
-├── dataset.jsonl           # Final training dataset
-├── tools/                  # Annotation tools
-│   ├── download_video.py
-│   ├── transcribe.py
-│   └── annotate.py
-└── models/                 # (Phase 2) Fine-tuned models
-    └── ...
-```
-
-## Game State Schema
-
-```json
-{
-  "end_number": 8,
-  "score": {"red": 5, "yellow": 3},
-  "hammer": "red",
-  "shot_number": 12,
-  "rocks_in_play": [
-    {"color": "red", "position": {"x": 0.5, "y": 2.1}},
-    {"color": "yellow", "position": {"x": -0.3, "y": 1.8}}
-  ],
-  "rock_counts": {"red": 3, "yellow": 2},
-  "last_shot": {"type": "draw", "result": "made"},
-  "game_context": "final end, close game"
-}
-```
-
-## Commentary Output Schema
-
-```json
-{
-  "strategic_assessment": "Red should draw to the four-foot here.",
-  "reasoning": "They're down two with hammer in the 8th. A draw for two ties the game.",
-  "key_factors": ["hammer advantage", "score situation", "end number"],
-  "confidence": 0.85
-}
-```
-
----
-
-## Progress Log
-
-### 2026-06-14 — Project Started
-- Created PROJECT.md
-- Created directory structure
-- Set up Python virtual environment
-- Installed yt-dlp and openai packages
-- Created tools:
-  - `download_video.py` — Download YouTube videos
-  - `transcribe_xai.py` — Transcribe using xAI Speech-to-Text API
-  - `transcribe_chunked.py` — Handle large videos (splits into 30-min chunks)
-  - `annotate.py` — Interactive annotation tool
-
-### 2026-06-15 — First Video Transcribed
-- Downloaded: 2024 Scotties Tournament of Hearts Final (URL: https://youtu.be/1ftIoA8zRqg)
+**Video:** 2024 Scotties Tournament of Hearts Final
 - Duration: 450 minutes (2.7 hours)
 - Transcript: 15,578 words across 432 segments
-- File: `transcripts/Brier_2024_Final_transcript.json`
-- Found strategic commentary examples in transcript
-
-### Architecture Decision
-Full Whisper with PyTorch too heavy for Pi 5 (426MB PyTorch + 542MB CUDA).
-**Decision:** Use xAI Speech-to-Text API instead of OpenAI Whisper.
-- Uses existing xAI API key from LeaderQuest project
-- No additional cost for transcription
-- Word-level timestamps supported
-- Curling keyterms added for better recognition
-- Large videos split into 30-minute chunks for reliability
-
-### xAI STT API
-- Endpoint: `https://api.x.ai/v1/stt`
-- Supports: word-level timestamps, diarization, keyterms
-- 500MB max file size, but long files timeout — use chunks
-- Already have API key configured
-
-### Next Steps
-1. ✅ xAI API key configured
-2. ✅ First video downloaded and transcribed
-3. ⏳ Annotate strategic moments with `annotate.py`
-4. Build initial dataset of 100 annotated moments
-5. Download more Brier/Scotties/Olympics videos
+- Vision-enriched: 72 segments analyzed, 37 with rocks detected
 
 ---
 
-## Related Projects
+## Key Discovery: Vision Model Works on Broadcast Video
 
-- **FCC Sheet5 Vision System** — `/home/curl/curling_vision/`
-- **The Syndicate** — Distributed AI team coordination
-- **Curly's TTS Model** — Audio synthesis (optional Phase 3 integration)
+The FCC curling vision model successfully detects rocks on Scotties/Brier overhead camera views:
+
+| Frame | Detected | Confidence |
+|-------|----------|------------|
+| 1:00 | 1 yellow rock | 77% |
+| 3:00 | 6 rocks (4 red, 2 yellow) | 90%+ |
+| Various | House detection | 57-70% |
+
+**This means we can auto-populate game state from video!**
 
 ---
 
-*Last updated: June 14, 2026*
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    DATA COLLECTION PIPELINE                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  YouTube Video ──► yt-dlp ──► Video File                    │
+│                           │                                 │
+│                           ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │              xAI Speech-to-Text API                 │   │
+│  │         (transcribe_chunked.py)                    │   │
+│  │                                                     │   │
+│  │  Video ──► 30-min chunks ──► Transcription         │   │
+│  │                              (word-level timestamps)│   │
+│  └─────────────────────────────────────────────────────┘   │
+│                           │                                 │
+│                           ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           Vision Model Integration                  │   │
+│  │         (sync_vision_transcript.py)                 │   │
+│  │                                                     │   │
+│  │  Transcript timestamps ──► Frame extraction         │   │
+│  │                              │                      │   │
+│  │                              ▼                      │   │
+│  │  ┌───────────────────────────────────────────┐     │   │
+│  │  │  FCC Rock Detection Model (Roboflow)     │     │   │
+│  │  │                                           │     │   │
+│  │  │  Frame ──► Rock positions               │     │   │
+│  │  │         ──► House detection              │     │   │
+│  │  │         ──► Score analysis                │     │   │
+│  │  └───────────────────────────────────────────┘     │   │
+│  │                              │                      │   │
+│  │                              ▼                      │   │
+│  │  Enriched Transcript (JSON)                        │   │
+│  │  {segment, text, vision: {rocks, score}}           │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                           │                                 │
+│                           ▼                                 │
+│  ┌─────────────────────────────────────────────────────┐   │
+│  │           Web Annotation Interface                  │   │
+│  │         (annotate_app.py - Flask)                  │   │
+│  │                                                     │   │
+│  │  Shows: Transcript + Frame + Vision Data            │   │
+│  │  Input: Strategic? (S/N) + Game State              │   │
+│  │  Output: Annotated training data                    │   │
+│  └─────────────────────────────────────────────────────┘   │
+│                           │                                 │
+│                           ▼                                 │
+│              Training Dataset (JSONL)                       │
+│   {game_state, commentary, vision_data, is_strategic}      │
+│                                                             │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Roadmap
+
+### Phase 1: Data Collection ✅ COMPLETE
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Video download tool | ✅ | `download_video.py` |
+| Transcription (xAI STT) | ✅ | `transcribe_chunked.py` |
+| Vision sync | ✅ | `sync_vision_transcript.py` |
+| Annotation interface | ✅ | `annotate_app.py` |
+| First video processed | ✅ | Scotties 2024 Final |
+
+**Remaining Phase 1 Work:**
+- [ ] Annotate 100+ strategic moments from first video
+- [ ] Download Brier finals (more games)
+- [ ] Digitize "Curl to Win" book for strategic principles
+- [ ] Build training dataset export
+
+### Phase 2: Model Training 🔜 NEXT
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Collect 1000+ annotations | 🔴 Blocked on Phase 1 | Need ~20 hours of video |
+| Choose base model | 🔴 Pending | Llama 3.1 8B or Mistral 7B |
+| Fine-tune on curling data | 🔴 Pending | Rocky's Mac mini (16GB) |
+| Evaluate against held-out games | 🔴 Pending | Test on unseen video |
+
+**Hardware:** Rocky's Mac mini (16GB unified memory) for training, or Pi 5 for inference
+
+### Phase 3: Vision Integration 🔴 BLOCKED
+
+| Task | Status | Notes |
+|------|--------|-------|
+| Build `strategy_engine.py` | 🔴 Pending | Game state → commentary |
+| Integrate with `game_tracker.py` | 🔴 Pending | Real-time input |
+| Add TTS output | 🔴 Pending | Optional: use Curly's TTS model |
+| Real-time pipeline | 🔴 Pending | Vision → Strategy → Voice |
+
+**Integration Point:** FCC Sheet5 Vision System (`/home/curl/curling_vision/`)
+
+---
+
+## Annotation Workflow
+
+1. **Start the app:**
+   ```bash
+   cd /home/curl/curling_vision/strategy-ai
+   source ../venv/bin/activate
+   python annotate_app.py
+   ```
+
+2. **Open browser:** `http://100.114.196.48:5001` (Tailscale) or `http://192.168.1.239:5001` (LAN)
+
+3. **Select transcript** (e.g., "Brier_2024_Final_transcript_vision.json")
+
+4. **For each segment:**
+   - Read the commentary text
+   - Review vision data (rock counts, score)
+   - Press `S` for strategic, `N` for not strategic
+   - Optionally fill in game state (end, score, hammer)
+   - Auto-advances to next segment
+
+5. **Export:** Click "Export" to download training data JSON
+
+---
+
+## Files & Locations
+
+```
+/home/curl/curling_vision/strategy-ai/
+├── PROJECT.md                    # This file
+├── DATA_SOURCES.md               # Training data strategy
+├── annotate_app.py               # Web annotation interface
+├── templates/
+│   ├── index.html                # Transcript list page
+│   └── annotate.html              # Annotation interface
+└── tools/
+    ├── download_video.py         # YouTube download
+    ├── transcribe_xai.py         # xAI STT transcription
+    ├── transcribe_chunked.py     # Large video handling
+    ├── sync_vision_transcript.py  # Vision integration
+    └── test_vision.py            # Vision model test
+
+/home/curl/curling-strategy-data/
+├── videos/                       # Downloaded videos
+├── transcripts/                  # Transcriptions
+│   ├── Brier_2024_Final_transcript.json
+│   └── Brier_2024_Final_transcript_vision.json
+├── frames/                       # Extracted frames for vision
+└── annotations/                  # Human annotations
+```
+
+---
+
+## Git Repository
+
+**Location:** `amiller47/hostwinds_taskfixerpro` (same as curling vision)
+
+**Path:** `strategy-ai/`
+
+**Note:** This is in the same repo as the curling vision system for easy integration.
+
+---
+
+## API Keys
+
+| Service | Purpose | Location |
+|---------|---------|----------|
+| xAI STT | Transcription | `strategy-ai/tools/.env` (not committed) |
+| Roboflow | Rock detection | `/home/curl/curling_config.json` |
+
+---
+
+## Next Steps (Prioritized)
+
+1. **Annotate the Scotties video** — Use the web interface to mark strategic moments
+2. **Download more videos** — Brier 2024 Final, Olympics finals
+3. **Process and sync** — Run vision sync on new videos
+4. **Build dataset** — Export annotations to JSONL format
+5. **Start Phase 2** — Fine-tune model when we have 1000+ annotations
+
+---
+
+## Success Metrics
+
+| Metric | Target | Current |
+|--------|--------|---------|
+| Videos processed | 5+ | 1 |
+| Strategic moments annotated | 1000+ | 0 |
+| Model accuracy (commentary quality) | TBD | — |
+| Real-time latency | <2s | — |
+
+---
+
+*Last updated: June 15, 2026*
