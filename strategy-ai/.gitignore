@@ -1,0 +1,22 @@
+# Large files - don't commit
+videos/*.mp4
+videos/*.mp3
+videos/chunks/
+*.mp4
+*.mp3
+
+# Python
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
